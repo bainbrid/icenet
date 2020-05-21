@@ -25,7 +25,7 @@ def seed(test,egamma,has_pfgsf_branches=True,AxE=True) :
 
    ##########
    # Init ... 
-   dir = "temp/seed"
+   dir = "plots2/seed"
 
    #############
    # ROC CURVE #

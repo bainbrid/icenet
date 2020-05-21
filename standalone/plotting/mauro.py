@@ -27,7 +27,7 @@ def mauro(test,egamma,has_pfgsf_branches=True,AxE=True) :
 
    ##########
    # Init ... 
-   dir = "temp/mauro"
+   dir = "plots2/mauro"
 
    #############
    # ROC CURVE #

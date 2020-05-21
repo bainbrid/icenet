@@ -27,7 +27,7 @@ def id(test,egamma,has_pfgsf_branches=True,AxE=True) :
 
    ##########
    # Init ... 
-   dir = "temp/id"
+   dir = "plots2/id"
 
    #############
    # ROC CURVE #
