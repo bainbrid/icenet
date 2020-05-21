@@ -20,14 +20,8 @@ from sklearn.metrics import roc_curve, roc_auc_score
 
 ################################################################################
 # 
-def mauro(test,egamma,has_pfgsf_branches=True,AxE=True) :
+def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
    print('##### MAURO ##########################################################')
-
-   #egamma = test
-
-   ##########
-   # Init ... 
-   dir = "plots2/mauro"
 
    #############
    # ROC CURVE #

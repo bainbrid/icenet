@@ -20,14 +20,8 @@ from sklearn.metrics import roc_curve, roc_auc_score
 
 ################################################################################
 # 
-def id(test,egamma,has_pfgsf_branches=True,AxE=True) :
+def id(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
    print('##### ID #############################################################')
-
-   #egamma = test
-
-   ##########
-   # Init ... 
-   dir = "plots2/id"
 
    #############
    # ROC CURVE #

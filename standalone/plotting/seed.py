@@ -20,12 +20,8 @@ from sklearn.metrics import roc_curve, roc_auc_score
 
 ################################################################################
 # 
-def seed(test,egamma,has_pfgsf_branches=True,AxE=True) :
+def seed(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
    print('##### SEED ###########################################################')
-
-   ##########
-   # Init ... 
-   dir = "plots2/seed"
 
    #############
    # ROC CURVE #

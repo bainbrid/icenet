@@ -386,10 +386,10 @@ print("has_pfgsf_branches",has_pfgsf_branches)
 AxE = True
 
 from plotting.seed import seed
-seed(test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+seed("output/plots_train2/seed",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
 
 from plotting.id import id
-id(test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+id("output/plots_train2/id",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
 
 from plotting.mauro import mauro
-mauro(test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+mauro("output/plots_train2/mauro",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
