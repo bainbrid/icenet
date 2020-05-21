@@ -728,108 +728,108 @@ effs(path=my_effs["path"],suffix=my_effs["suffix"],mistag=my_effs["mistag"],
 
 ################################################################################
 
-#my_effs = {
-#
-#   # All electrons
-#   "all_electrons":{ 
-#      "mistag":False,
-#      "title":"AxE vs GEN pT, Very Loose seeding (>0.19 | >-1.99)",
-#      "suffix":"",
-#      "total" :test.gen_pt[(test.is_e)],
-#      "passed":test.gen_pt[(test.is_e)&(test.gsf_pt>0.)],
-#      },
-#   # All electrons, mistag
-#   "all_electrons_mistag":{ 
-#      "mistag":True,
-#      "title":"Mistag rate vs TRK pT, Very Loose seeding (>0.19 | >-1.99)",
-#      "suffix":"",
-#      "total" :test.trk_pt[np.invert(test.is_e)],
-#      "passed":test.trk_pt[np.invert(test.is_e)&(test.gsf_pt>0.)],
-#      },
-#
-#   # Tight seeding threshold (3.05)
-#   # https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronSeeds_cfi.py#L4
-#   "tight_seed":{ 
-#      "mistag":False,
-#      "title":"AxE vs GEN pT, Tight seeding (>3.05)",
-#      "suffix":"_tight_seed",
-#      "total" :test.gen_pt[(test.is_e)],
-#      "passed":test.gen_pt[(test.is_e)&(test.gsf_pt>0.)&(test.gsf_bdtout1>3.05)],
-#      },
-#   # Tight seeding threshold (3.05), mistag
-#   # https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronSeeds_cfi.py#L4
-#   "tight_seed_mistag":{ 
-#      "mistag":True,
-#      "title":"Mistag rate vs TRK pT, Tight seeding (>3.05)",
-#      "suffix":"_tight_seed",
-#      "total" :test.trk_pt[np.invert(test.is_e)&(test.gsf_pt>0.)],
-#      "passed":test.trk_pt[np.invert(test.is_e)&(test.gsf_pt>0.)&(test.gsf_bdtout1>3.05)],
-#      },
-#   
-#   # Tight biased seeding threshold (2.42)
-#   # https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronSeeds_cfi.py#L4
-#   "tight_seed_or":{ 
-#      "mistag":False,
-#      "title":"AxE vs GEN pT, Tight biased seeding (>2.42)",
-#      "suffix":"_tight_seed_biased",
-#      "total" :test.gen_pt[(test.is_e)],
-#      "passed":test.gen_pt[(test.is_e)&(test.gsf_pt>0.)&(test.gsf_bdtout2>2.42)],
-#      },
-#   # Tight biased seeding threshold (2.42), mistag
-#   # https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronSeeds_cfi.py#L4
-#   "tight_seed_or_mistag":{ 
-#      "mistag":True,
-#      "title":"Mistag rate vs TRK pT, Tight biased seeding (>2.42)",
-#      "suffix":"_tight_seed_biased",
-#      "total" :test.trk_pt[np.invert(test.is_e)&(test.gsf_pt>0.)],
-#      "passed":test.trk_pt[np.invert(test.is_e)&(test.gsf_pt>0.)&(test.gsf_bdtout2>2.42)],
-#      },
-#
-#   # 2019Aug07 Loose ID threshold (4.24)
-#   # https://www.dropbox.com/s/kd6w3wfcglhelpm/190807_ElectronID.pdf?dl=0
-#   "loose_id":{ 
-#      "mistag":False,
-#      "title":"AxE vs GEN pT, 2019Aug07 Loose ID (>4.24)",
-#      "suffix":"_loose_id",
-#      "total" :test.gen_pt[(test.is_e)],
-#      "passed":test.gen_pt[(test.is_e)&(test.gsf_pt>0.)&(test.training_out>4.24)],
-#      },
-#   # 2019Aug07 Loose ID threshold (4.24), mistag
-#   # https://www.dropbox.com/s/kd6w3wfcglhelpm/190807_ElectronID.pdf?dl=0
-#   "loose_id_mistag":{ 
-#      "mistag":True,
-#      "title":"Mistag rate vs GSF pT, 2019Aug07 Loose ID (>4.24)",
-#      "suffix":"_loose_id",
-#      "total" :test.gsf_pt[np.invert(test.is_e)&(test.gsf_pt>0.)],
-#      "passed":test.gsf_pt[np.invert(test.is_e)&(test.gsf_pt>0.)&(test.training_out>4.24)],
-#      },
-#
-#   # 2019Aug07 Tight ID threshold (4.93)
-#   # https://www.dropbox.com/s/kd6w3wfcglhelpm/190807_ElectronID.pdf?dl=0
-#   "id_tight":{ 
-#      "mistag":False,
-#      "title":"AxE vs GEN pT, 2019Aug07 Tight ID (>4.93)",
-#      "suffix":"_tight_id",
-#      "total" :test.gen_pt[(test.is_e)],
-#      "passed":test.gen_pt[(test.is_e)&(test.gsf_pt>0.)&(test.training_out>4.93)],
-#      },
-#   # 2019Aug07 Tight ID threshold (4.93), mistag
-#   # https://www.dropbox.com/s/kd6w3wfcglhelpm/190807_ElectronID.pdf?dl=0
-#   "id_tight_mistag":{ 
-#      "mistag":True,
-#      "title":"Mistag rate vs GSF pT, 2019Aug07 Tight ID (>4.93)",
-#      "suffix":"_tight_id",
-#      "total" :test.gsf_pt[np.invert(test.is_e)&(test.gsf_pt>0.)],
-#      "passed":test.gsf_pt[np.invert(test.is_e)&(test.gsf_pt>0.)&(test.training_out>4.93)],
-#      },
-#
-#   }
-#
-#from plotting.efficiency import efficiency as eff
-#for key in my_effs.keys() :
-#   eff(output_base,
-#       mistag=my_effs[key]["mistag"],
-#       title=my_effs[key]["title"], 
-#       suffix=my_effs[key]["suffix"],
-#       value_total=my_effs[key]["total"],
-#       value_passed=my_effs[key]["passed"])
+my_effs = {
+
+   # All electrons
+   "all_electrons":{ 
+      "mistag":False,
+      "title":"AxE vs GEN pT, Very Loose seeding (>0.19 | >-1.99)",
+      "suffix":"",
+      "total" :test.gen_pt[(test.is_e)],
+      "passed":test.gen_pt[(test.is_e)&(test.gsf_pt>0.)],
+      },
+   # All electrons, mistag
+   "all_electrons_mistag":{ 
+      "mistag":True,
+      "title":"Mistag rate vs TRK pT, Very Loose seeding (>0.19 | >-1.99)",
+      "suffix":"",
+      "total" :test.trk_pt[np.invert(test.is_e)],
+      "passed":test.trk_pt[np.invert(test.is_e)&(test.gsf_pt>0.)],
+      },
+
+   # Tight seeding threshold (3.05)
+   # https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronSeeds_cfi.py#L4
+   "tight_seed":{ 
+      "mistag":False,
+      "title":"AxE vs GEN pT, Tight seeding (>3.05)",
+      "suffix":"_tight_seed",
+      "total" :test.gen_pt[(test.is_e)],
+      "passed":test.gen_pt[(test.is_e)&(test.gsf_pt>0.)&(test.gsf_bdtout1>3.05)],
+      },
+   # Tight seeding threshold (3.05), mistag
+   # https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronSeeds_cfi.py#L4
+   "tight_seed_mistag":{ 
+      "mistag":True,
+      "title":"Mistag rate vs TRK pT, Tight seeding (>3.05)",
+      "suffix":"_tight_seed",
+      "total" :test.trk_pt[np.invert(test.is_e)&(test.gsf_pt>0.)],
+      "passed":test.trk_pt[np.invert(test.is_e)&(test.gsf_pt>0.)&(test.gsf_bdtout1>3.05)],
+      },
+   
+   # Tight biased seeding threshold (2.42)
+   # https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronSeeds_cfi.py#L4
+   "tight_seed_or":{ 
+      "mistag":False,
+      "title":"AxE vs GEN pT, Tight biased seeding (>2.42)",
+      "suffix":"_tight_seed_biased",
+      "total" :test.gen_pt[(test.is_e)],
+      "passed":test.gen_pt[(test.is_e)&(test.gsf_pt>0.)&(test.gsf_bdtout2>2.42)],
+      },
+   # Tight biased seeding threshold (2.42), mistag
+   # https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronSeeds_cfi.py#L4
+   "tight_seed_or_mistag":{ 
+      "mistag":True,
+      "title":"Mistag rate vs TRK pT, Tight biased seeding (>2.42)",
+      "suffix":"_tight_seed_biased",
+      "total" :test.trk_pt[np.invert(test.is_e)&(test.gsf_pt>0.)],
+      "passed":test.trk_pt[np.invert(test.is_e)&(test.gsf_pt>0.)&(test.gsf_bdtout2>2.42)],
+      },
+
+   # 2019Aug07 Loose ID threshold (4.24)
+   # https://www.dropbox.com/s/kd6w3wfcglhelpm/190807_ElectronID.pdf?dl=0
+   "loose_id":{ 
+      "mistag":False,
+      "title":"AxE vs GEN pT, 2019Aug07 Loose ID (>4.24)",
+      "suffix":"_loose_id",
+      "total" :test.gen_pt[(test.is_e)],
+      "passed":test.gen_pt[(test.is_e)&(test.gsf_pt>0.)&(test.training_out>4.24)],
+      },
+   # 2019Aug07 Loose ID threshold (4.24), mistag
+   # https://www.dropbox.com/s/kd6w3wfcglhelpm/190807_ElectronID.pdf?dl=0
+   "loose_id_mistag":{ 
+      "mistag":True,
+      "title":"Mistag rate vs GSF pT, 2019Aug07 Loose ID (>4.24)",
+      "suffix":"_loose_id",
+      "total" :test.gsf_pt[np.invert(test.is_e)&(test.gsf_pt>0.)],
+      "passed":test.gsf_pt[np.invert(test.is_e)&(test.gsf_pt>0.)&(test.training_out>4.24)],
+      },
+
+   # 2019Aug07 Tight ID threshold (4.93)
+   # https://www.dropbox.com/s/kd6w3wfcglhelpm/190807_ElectronID.pdf?dl=0
+   "id_tight":{ 
+      "mistag":False,
+      "title":"AxE vs GEN pT, 2019Aug07 Tight ID (>4.93)",
+      "suffix":"_tight_id",
+      "total" :test.gen_pt[(test.is_e)],
+      "passed":test.gen_pt[(test.is_e)&(test.gsf_pt>0.)&(test.training_out>4.93)],
+      },
+   # 2019Aug07 Tight ID threshold (4.93), mistag
+   # https://www.dropbox.com/s/kd6w3wfcglhelpm/190807_ElectronID.pdf?dl=0
+   "id_tight_mistag":{ 
+      "mistag":True,
+      "title":"Mistag rate vs GSF pT, 2019Aug07 Tight ID (>4.93)",
+      "suffix":"_tight_id",
+      "total" :test.gsf_pt[np.invert(test.is_e)&(test.gsf_pt>0.)],
+      "passed":test.gsf_pt[np.invert(test.is_e)&(test.gsf_pt>0.)&(test.training_out>4.93)],
+      },
+
+   }
+
+from plotting.efficiency import efficiency as eff
+for key in my_effs.keys() :
+   eff(output_base,
+       mistag=my_effs[key]["mistag"],
+       title=my_effs[key]["title"], 
+       suffix=my_effs[key]["suffix"],
+       value_total=my_effs[key]["total"],
+       value_passed=my_effs[key]["passed"])
