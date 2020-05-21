@@ -107,8 +107,8 @@ def discriminator( output_base,
 
    y_values  = [ x/y if y > 0. else 0. for x,y in zip(his_bkgd_test/his_bkgd_test.sum(),
                                                       his_bkgd_train/his_bkgd_train.sum()) ]
-   yerr_low  = [ r*np.sqrt( (poisson_interval(x)[0]/x)**2. + (poisson_interval(y)[0]/y)**2. ) for x,y,r in zip(his_bkgd_test,his_bkgd_train,y_values) ]
-   yerr_high = [ r*np.sqrt( (poisson_interval(x)[1]/x)**2. + (poisson_interval(y)[1]/y)**2. ) for x,y,r in zip(his_bkgd_test,his_bkgd_train,y_values) ]
+   yerr_low  = [ r*poisson_interval(x)[0]/x if x > 0. else poisson_interval(x)[0]/1 for x,r in zip(his_bkgd_train,y_values) ]
+   yerr_high = [ r*poisson_interval(x)[1]/x if x > 0. else poisson_interval(x)[1]/1 for x,r in zip(his_bkgd_train,y_values) ]
    rax.errorbar(x=bin_centres, 
                 y=y_values,
                 yerr=[yerr_low,yerr_high],

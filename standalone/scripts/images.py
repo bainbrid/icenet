@@ -37,13 +37,13 @@ print("Command line args:",vars(args))
 print("##### Define inputs #####")
 
 print(os.getcwd())
-assert os.getcwd().endswith("icenet/standalone"), print("You must execute this script from within the 'icenet/standalone' dir!")
+assert os.getcwd().endswith("icenet/standalone/scripts"), print("You must execute this script from within the 'icenet/standalone/scripts' dir!")
 
 # I/O directories
-input_data='./data'
+input_data='../data'
 print("input_data:",input_data)
-input_base=os.getcwd()+"/input"
-output_base=os.getcwd()+"/output"
+input_base=os.getcwd()+"/../input"
+output_base=os.getcwd()+"/../output"
 if not os.path.isdir(input_base) : 
    raise_with_traceback(ValueError('Could not find input_base "{:s}"'.format(input_base)))
 print("input_base:",input_base)

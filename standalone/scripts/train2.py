@@ -54,7 +54,7 @@ print("Command line args:",vars(args))
 print("##### Define inputs #####")
 
 print(os.getcwd())
-assert os.getcwd().endswith("icenet/standalone"), print("You must execute this script from within the 'icenet/standalone' dir!")
+assert os.getcwd().endswith("icenet/standalone/scripts"), print("You must execute this script from within the 'icenet/standalone/scripts' dir!")
 
 print("hostname:",socket.gethostname())
 lxplus = True if "cern.ch" in socket.gethostname() else False
@@ -64,15 +64,15 @@ if lxplus :
    #input_data='/eos/cms/store/cmst3/group/bpark/electron_training/2019Jul22/MINIAOD'
    input_data='~/eos/electrons/ntuples/BuToKJpsi_Toee_Mufilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/2020May20'
 else :
-   input_data='./data/2020May20'
+   input_data='../data/2020May20'
 print("input_data:",input_data)
 if lxplus :
    cmssw_base='/afs/cern.ch/user/b/bainbrid/work/public/7-slc7/CMSSW_10_2_15'
    input_base='{:s}/src/LowPtElectrons/LowPtElectrons/macros/input'.format(cmssw_base)
    output_base='{:s}/src/LowPtElectrons/LowPtElectrons/macros/output'.format(cmssw_base)
 else :
-   input_base=os.getcwd()+"/input"
-   output_base=os.getcwd()+"/output"
+   input_base=os.getcwd()+"/../input"
+   output_base=os.getcwd()+"/../output"
 if not os.path.isdir(input_base) : 
    raise_with_traceback(ValueError('Could not find input_base "{:s}"'.format(input_base)))
 print("input_base:",input_base)
@@ -386,10 +386,10 @@ print("has_pfgsf_branches",has_pfgsf_branches)
 AxE = True
 
 from plotting.seed import seed
-seed("output/plots_train2/seed",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+seed("../output/plots_train2/seed",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
 
 from plotting.id import id
-id("output/plots_train2/id",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+id("../output/plots_train2/id",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
 
 from plotting.mauro import mauro
-mauro("output/plots_train2/mauro",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+mauro("../output/plots_train2/mauro",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
