@@ -159,21 +159,21 @@ def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
    ##########
    # EGamma GSF electrons (ECAL-driven)
 
-   has_gsf |= egamma.seed_ecal_driven
-   has_ele &= egamma.seed_ecal_driven
-
-   if AxE is True :
-      denom = egamma.is_e; numer = has_ele&denom
-      _eff = float(numer.sum()) / float(denom.sum()) if float(denom.sum()) > 0. else 0.
-   else :
-      denom = has_gsf&egamma.is_e; numer = has_ele&denom
-      _eff = float(numer.sum()) / float(denom.sum()) if float(denom.sum()) > 0. else 0.
-   denom = has_gsf&(~egamma.is_e); numer = has_ele&denom
-   _fr = float(numer.sum()) / float(denom.sum()) if float(denom.sum()) > 0. else 0.
-   plt.plot([_fr], [_eff],
-            marker='o', markerfacecolor='none', markeredgecolor='purple', markersize=8, linestyle='None',
-            label='PF GSF electron (ECAL-driven)')
-   print('eff: {:.3f}, mistag: {:.4f}'.format(_eff,_fr),'EGamma GSF electrons (ECAL-driven)')
+#   has_gsf |= egamma.seed_ecal_driven
+#   has_ele &= egamma.seed_ecal_driven
+#
+#   if AxE is True :
+#      denom = egamma.is_e; numer = has_ele&denom
+#      _eff = float(numer.sum()) / float(denom.sum()) if float(denom.sum()) > 0. else 0.
+#   else :
+#      denom = has_gsf&egamma.is_e; numer = has_ele&denom
+#      _eff = float(numer.sum()) / float(denom.sum()) if float(denom.sum()) > 0. else 0.
+#   denom = has_gsf&(~egamma.is_e); numer = has_ele&denom
+#   _fr = float(numer.sum()) / float(denom.sum()) if float(denom.sum()) > 0. else 0.
+#   plt.plot([_fr], [_eff],
+#            marker='o', markerfacecolor='none', markeredgecolor='purple', markersize=8, linestyle='None',
+#            label='PF GSF electron (ECAL-driven)')
+#   print('eff: {:.3f}, mistag: {:.4f}'.format(_eff,_fr),'EGamma GSF electrons (ECAL-driven)')
 
    # "New" WPs 
    unb_L   = np.abs(gsf_unb_fpr*gsf_fr-eg_fr*10.).argmin()
@@ -195,51 +195,55 @@ def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
 
    x,y = gsf_unb_fpr[unb_L]*gsf_fr,gsf_unb_tpr[unb_L]*gsf_eff
    plt.plot([x], [y],  marker='o', markerfacecolor='none', markeredgecolor='green', markersize=4)
-   plt.text(x, y-0.01, "L", fontsize=6, ha='center', va='center', color='green' )
-
+   plt.text(x, y-0.02, "L", fontsize=10, ha='center', va='center', color='green' )
+   
    x,y = gsf_unb_fpr[unb_M]*gsf_fr,gsf_unb_tpr[unb_M]*gsf_eff
    plt.plot([x], [y],  marker='o', markerfacecolor='none', markeredgecolor='green', markersize=4)
-   plt.text(x, y-0.01, "M", fontsize=6, ha='center', va='center', color='green' )
-
+   plt.text(x, y-0.02, "M", fontsize=10, ha='center', va='center', color='green' )
+   
    x,y = gsf_unb_fpr[unb_T]*gsf_fr,gsf_unb_tpr[unb_T]*gsf_eff
    plt.plot([x], [y],  marker='o', markerfacecolor='none', markeredgecolor='green', markersize=4)
-   plt.text(x, y-0.01, "T", fontsize=6, ha='center', va='center', color='green' )
-
+   plt.text(x, y-0.02, "T", fontsize=10, ha='center', va='center', color='green' )
+   
    x,y = gsf_unb_fpr[unb_VT]*gsf_fr,gsf_unb_tpr[unb_VT]*gsf_eff
    plt.plot([x], [y], marker='o', markerfacecolor='none', markeredgecolor='green', markersize=4)
-   plt.text(x, y-0.01, "VT", fontsize=6, ha='center', va='center', color='green' )
-
+   plt.text(x, y-0.02, "VT", fontsize=10, ha='center', va='center', color='green' )
+   
    x,y = ele_unb_fpr[unb_ELE]*ele_fr,ele_unb_tpr[unb_ELE]*ele_eff
    plt.plot([x], [y], marker='o', markerfacecolor='none', markeredgecolor='purple', markersize=4)
-   plt.text(x, y-0.01, "E", fontsize=6, ha='center', va='center', color='purple' )
+   plt.text(x, y-0.02, "E", fontsize=10, ha='center', va='center', color='purple' )
 
    x,y = id_fpr[id_ELE]*ele_fr,id_tpr[id_ELE]*ele_eff
    plt.plot([x], [y], marker='o', markerfacecolor='none', markeredgecolor='purple', markersize=4)
-   plt.text(x, y-0.01, "E", fontsize=6, ha='center', va='center', color='purple' )
+   plt.text(x, y-0.02, "E", fontsize=10, ha='center', va='center', color='purple' )
 
-#   # Original WPs
-#   # https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronSeeds_cfi.py
-#   orig_VL  = np.abs(gsf_unb_score-0.19).argmin()
-#   orig_L   = np.abs(gsf_unb_score-1.20).argmin()
-#   orig_M   = np.abs(gsf_unb_score-2.02).argmin()
-#   orig_T   = np.abs(gsf_unb_score-3.05).argmin()
-#   orig_ELE = np.abs(gsf_unb_score-5.26).argmin() # same FR?
+   # Original WPs
+   # https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronSeeds_cfi.py
+   #orig_VL  = np.abs(gsf_unb_score-0.19).argmin()
+   #orig_L   = np.abs(gsf_unb_score-1.20).argmin()
+   #orig_M   = np.abs(gsf_unb_score-2.02).argmin()
+   #orig_T   = np.abs(gsf_unb_score-3.05).argmin()
+   #orig_ELE = np.abs(gsf_unb_score-5.26).argmin() # same FR?
 
-#   x,y = gsf_unb_fpr[orig_VL]*gsf_fr,gsf_unb_tpr[orig_VL]*gsf_eff
-#   plt.plot([x],[y], marker='^', markerfacecolor='none', markeredgecolor='green', markersize=4)
-#   plt.text(x, y-0.02, "VL", fontsize=10, ha='center', va='center', color='green' )
-#   x,y = gsf_unb_fpr[orig_L]*gsf_fr,gsf_unb_tpr[orig_L]*gsf_eff
-#   plt.plot([x],[y], marker='^', markerfacecolor='none', markeredgecolor='green', markersize=4)
-#   plt.text(x, y-0.02, "L", fontsize=10, ha='center', va='center', color='green' )
-#   x,y = gsf_unb_fpr[orig_M]*gsf_fr,gsf_unb_tpr[orig_M]*gsf_eff
-#   plt.plot([x],[y], marker='^', markerfacecolor='none', markeredgecolor='green', markersize=4)
-#   plt.text(x, y-0.02, "M", fontsize=10, ha='center', va='center', color='green' )
-#   x,y = gsf_unb_fpr[orig_T]*gsf_fr,gsf_unb_tpr[orig_T]*gsf_eff
-#   plt.plot([x],[y], marker='^', markerfacecolor='none', markeredgecolor='green', markersize=4)
-#   plt.text(x, y-0.02, "T", fontsize=10, ha='center', va='center', color='green' )
-#   x,y = gsf_unb_fpr[orig_ELE]*gsf_fr,gsf_unb_tpr[orig_ELE]*gsf_eff
-#   plt.plot([x],[y], marker='^', markerfacecolor='none', markeredgecolor='purple', markersize=4)
-#   plt.text(x, y-0.02, "E", fontsize=10, ha='center', va='center', color='purple' )
+   #x,y = gsf_unb_fpr[orig_VL]*gsf_fr,gsf_unb_tpr[orig_VL]*gsf_eff
+   #plt.plot([x],[y], marker='^', markerfacecolor='none', markeredgecolor='green', markersize=4)
+   #plt.text(x, y-0.02, "VL", fontsize=10, ha='center', va='center', color='green' )
+
+   #x,y = gsf_unb_fpr[orig_L]*gsf_fr,gsf_unb_tpr[orig_L]*gsf_eff
+   #plt.plot([x],[y], marker='^', markerfacecolor='none', markeredgecolor='green', markersize=4)
+   #plt.text(x, y-0.02, "L", fontsize=10, ha='center', va='center', color='green' )
+   
+   #x,y = gsf_unb_fpr[orig_M]*gsf_fr,gsf_unb_tpr[orig_M]*gsf_eff
+   #plt.plot([x],[y], marker='^', markerfacecolor='none', markeredgecolor='green', markersize=4)
+   #plt.text(x, y-0.02, "M", fontsize=10, ha='center', va='center', color='green' )
+   
+   #x,y = gsf_unb_fpr[orig_T]*gsf_fr,gsf_unb_tpr[orig_T]*gsf_eff
+   #plt.plot([x],[y], marker='^', markerfacecolor='none', markeredgecolor='green', markersize=4)
+   #plt.text(x, y-0.02, "T", fontsize=10, ha='center', va='center', color='green' )
+
+   #x,y = gsf_unb_fpr[orig_ELE]*gsf_fr,gsf_unb_tpr[orig_ELE]*gsf_eff
+   #plt.plot([x],[y], marker='^', markerfacecolor='none', markeredgecolor='purple', markersize=4)
+   #plt.text(x, y+0.02, "E", fontsize=10, ha='center', va='center', color='purple' )
    
    ##########
    # Finish up ... 
@@ -273,17 +277,18 @@ def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
    has_gsf_ = (egamma.has_gsf) & (egamma.gsf_pt>0.5) & (np.abs(egamma.gsf_eta)<2.5)
    has_pfgsf = (egamma.has_pfgsf) & (egamma.pfgsf_pt>0.5) & (np.abs(egamma.pfgsf_eta)<2.5)
    has_ele_ = (egamma.has_ele) & (egamma.ele_pt>0.5) & (np.abs(egamma.ele_eta)<2.5)
-   curves = [{"label":"EG GSF","var":egamma.gsf_pt,"mask":(egamma.is_e)&(has_gsf_),"condition":(has_pfgsf),"colour":"green","size":7,},
-             {"label":"PF ELE","var":egamma.gsf_pt,"mask":(egamma.is_e)&(has_gsf_),"condition":(has_ele_),"colour":"purple","size":7,},
-             {"label":"Unbiased","var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_ELE]),"colour":"blue","size":7,},
-             {"label":"ID","var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test['training_out']>id_score[id_ELE]),"colour":"black","size":7,},
-             #{"label":"Track (VT)","var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_VT]),"colour":"red","size":7,},
-             #{"label":"Track (T)", "var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_T]),"colour":"red","size":6,},
-             #{"label":"Track (M)", "var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_M]),"colour":"red","size":5,},
-             #{"label":"Track (L)", "var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_L]),"colour":"red","size":4,},
-             #{"label":"Track (VL)","var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_VL]),"colour":"red","size":3,},
-             {"label":"Open",     "var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele),"colour":"red","size":7,},
-             ]
+   curves = [
+      {"label":"EG GSF","var":egamma.gsf_pt,"mask":(egamma.is_e)&(has_gsf_),"condition":(has_pfgsf),"colour":"green","size":7,},
+      {"label":"PF ELE","var":egamma.gsf_pt,"mask":(egamma.is_e)&(has_gsf_),"condition":(has_ele_),"colour":"purple","size":7,},
+      {"label":"Unbiased","var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_ELE]),"colour":"blue","size":7,},
+      {"label":"ID","var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test['training_out']>id_score[id_ELE]),"colour":"black","size":7,},
+      #{"label":"Track (VT)","var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_VT]),"colour":"red","size":7,},
+      #{"label":"Track (T)", "var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_T]),"colour":"red","size":6,},
+      #{"label":"Track (M)", "var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_M]),"colour":"red","size":5,},
+      #{"label":"Track (L)", "var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_L]),"colour":"red","size":4,},
+      #{"label":"Track (VL)","var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_VL]),"colour":"red","size":3,},
+      {"label":"Open",     "var":test.gsf_pt, "mask":(test.is_e)&(has_gsf), "condition":(has_ele),"colour":"red","size":7,},
+      ]
              
    for idx,curve in enumerate(curves) :
       #print("label:",curve["label"])
@@ -327,18 +332,19 @@ def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
    has_gsf_ = (egamma.has_gsf) & (egamma.gsf_pt>0.5) & (np.abs(egamma.gsf_eta)<2.5)
    has_pfgsf = (egamma.has_pfgsf) & (egamma.pfgsf_pt>0.5) & (np.abs(egamma.pfgsf_eta)<2.5)
    has_ele_ = (egamma.has_ele) & (egamma.ele_pt>0.5) & (np.abs(egamma.ele_eta)<2.5)
-   curves = [{"label":"EG GSF","var":egamma.gsf_pt,"mask":(~egamma.is_e)&(has_gsf_),"condition":(has_pfgsf),"colour":"green","size":7,},
-             {"label":"PF ELE","var":egamma.gsf_pt,"mask":(~egamma.is_e)&(has_gsf_),"condition":(has_ele_),"colour":"purple","size":7,},
-             {"label":"Unbiased","var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_ELE]),"colour":"blue","size":7,},
-             {"label":"ID","var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test['training_out']>id_score[id_ELE]),"colour":"black","size":7,},
-             #{"label":"Track (VT)","var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_VT]),"colour":"red","size":7,},
-             #{"label":"Track (T)", "var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_T]),"colour":"red","size":6,},
-             #{"label":"Track (M)", "var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_M]),"colour":"red","size":5,},
-             #{"label":"Track (L)", "var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_L]),"colour":"red","size":4,},
-             #{"label":"Track (VL)","var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_VL]),"colour":"red","size":3,},
-             {"label":"Open",     "var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele),"colour":"red","size":7,},
-             ]
-
+   curves = [
+      {"label":"EG GSF","var":egamma.gsf_pt,"mask":(~egamma.is_e)&(has_gsf_),"condition":(has_pfgsf),"colour":"green","size":7,},
+      {"label":"PF ELE","var":egamma.gsf_pt,"mask":(~egamma.is_e)&(has_gsf_),"condition":(has_ele_),"colour":"purple","size":7,},
+      {"label":"Unbiased","var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_ELE]),"colour":"blue","size":7,},
+      {"label":"ID","var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test['training_out']>id_score[id_ELE]),"colour":"black","size":7,},
+      #{"label":"Track (VT)","var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_VT]),"colour":"red","size":7,},
+      #{"label":"Track (T)", "var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_T]),"colour":"red","size":6,},
+      #{"label":"Track (M)", "var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_M]),"colour":"red","size":5,},
+      #{"label":"Track (L)", "var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_L]),"colour":"red","size":4,},
+      #{"label":"Track (VL)","var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele)&(test.gsf_bdtout1>gsf_unb_score[unb_VL]),"colour":"red","size":3,},
+      {"label":"Open",     "var":test.gsf_pt, "mask":(~test.is_e)&(has_gsf), "condition":(has_ele),"colour":"red","size":7,},
+      ]
+   
    for idx,curve in enumerate(curves) :
       his_total,_ = np.histogram(curve["var"][curve["mask"]],bins=bin_edges)
       his_passed,_ = np.histogram(curve["var"][curve["mask"]&curve["condition"]],bins=bin_edges)
