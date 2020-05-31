@@ -83,7 +83,10 @@ print("output_base:",output_base)
 files = [
 #  input_data+'/output.LATEST.root', # 1,797,425 entries
    #input_data+'/output.root' # entries???
-   input_data+'/output_aod.root',
+   input_data+['/output_aod.root',
+               '/output_aod_test.root',
+               '/output_miniaod.root',
+               '/output_miniaod_test.root'][0]
 ]
 new_ntuples = any([ "LATEST" in x for x in files ])
 
@@ -393,3 +396,6 @@ id("../output/plots_train2/id",test,egamma,has_pfgsf_branches=has_pfgsf_branches
 
 from plotting.mauro import mauro
 mauro("../output/plots_train2/mauro",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+
+from plotting.miniaod import miniaod
+miniaod("../output/plots_train2/miniaod",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
