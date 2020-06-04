@@ -119,10 +119,11 @@ features = [ # ORDER IS VERY IMPORTANT !
 additional = [
    'gen_pt','gen_eta', 
    'trk_pt','trk_eta','trk_charge','trk_dr',
-   'gsf_pt','gsf_eta','gsf_dr','gsf_bdtout2',
+   'gsf_pt','gsf_eta','gsf_dr','gsf_bdtout2','gsf_mode_pt',
    'ele_pt','ele_eta','ele_dr','ele_mva_value','ele_mva_id',
-   'evt','weight',
-   'tag_pt','tag_eta'
+   'evt','weight','rho',
+   'tag_pt',
+   'tag_eta','gsf_dxy','gsf_dz','gsf_nhits','gsf_chi2red',
 ]
 
 labelling = [
@@ -141,7 +142,7 @@ print("##### Load files #####")
 def get_data(files,columns,features) :
 
    #@@ BEGIN
-   pfgsf = ['pfgsf_pt','pfgsf_eta','has_pfgsf',]
+   pfgsf = ['pfgsf_pt','pfgsf_eta','has_pfgsf','pfgsf_mode_pt']
    has_pfgsf_branches = None
    try : 
       uproot.open(files[0]).get('ntuplizer/tree').pandas.df(branches=pfgsf)
@@ -179,6 +180,18 @@ print(data.dtypes)
 
 ################################################################################
 print("##### Preprocessing the data #####")
+
+# swap normal and mode estimates of GSF pT
+if False :
+   gsf_tmp_pt = list(data.gsf_pt)
+   data.gsf_pt = data.gsf_mode_pt
+   data.gsf_mode_pt = gsf_tmp_pt
+   pfgsf_tmp_pt = list(data.pfgsf_pt)
+   data.pfgsf_pt = data.pfgsf_mode_pt
+   data.pfgsf_mode_pt = pfgsf_tmp_pt
+
+print("gsf_pt:      "," ".join(["{:6.3f}".format(x) for x in data.gsf_pt if x > -10.][:10]))
+print("gsf_mode_pt: "," ".join(["{:6.3f}".format(x) for x in data.gsf_mode_pt if x > -10.][:10]))
 
 # Filter based on tag muon pT and eta
 tag_muon_pt = 5.
