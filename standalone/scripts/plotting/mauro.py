@@ -18,6 +18,8 @@ from matplotlib.font_manager import FontProperties
 import numpy as np
 from sklearn.metrics import roc_curve, roc_auc_score
 
+from standalone import binomial_hpdr
+
 ################################################################################
 # 
 def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
@@ -251,6 +253,7 @@ def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
    plt.tight_layout()
    plt.savefig(dir+'/roc.pdf')
    plt.clf()
+   plt.close()
 
    ##############
    # EFF CURVES #
@@ -294,13 +297,19 @@ def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
       #print("label:",curve["label"])
       his_total,_ = np.histogram(curve["var"][curve["mask"]],bins=bin_edges)
       his_passed,_ = np.histogram(curve["var"][curve["mask"]&curve["condition"]],bins=bin_edges)
-      ax.errorbar(x=bin_edges[:-1], #bin_centres,
-                  y=[ x/y if y > 0 else 0. for x,y in zip(his_passed,his_total) ],
-                  yerr=[ np.sqrt(x/y*(1-x/y)/y) if y > 0 else 0. for x,y in zip(his_passed,his_total) ],
+      x=bin_edges[:-1]
+      y=[ x/y if y > 0 else 0. for x,y in zip(his_passed,his_total) ]
+      yhigh=[ binomial_hpdr(p,t)[1]-(p/t) if t > 0 else 0. for p,t in zip(his_passed,his_total) ]
+      ylow =[ (p/t)-binomial_hpdr(p,t)[0] if t > 0 else 0. for p,t in zip(his_passed,his_total) ]
+      yerr =[ylow,yhigh]
+      label='{:s} (mean={:5.3f})'.format(curve["label"],
+                                         float(his_passed.sum())/float(his_total.sum()) \
+                                            if his_total.sum() > 0 else 0.)
+      ax.errorbar(x=x,
+                  y=y,
+                  yerr=yerr,
                   #color=None,
-                  label='{:s} (mean={:5.3f})'.format(curve["label"],
-                                                     float(his_passed.sum())/float(his_total.sum()) \
-                                                        if his_total.sum() > 0 else 0.),
+                  label=label,
                   marker='o',
                   color=curve["colour"],
                   markerfacecolor="white",
@@ -313,12 +322,13 @@ def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
    plt.title('Efficiency as a function of GSF track pT')
    plt.xlabel('Transverse momentum (GeV)')
    plt.ylabel('Efficiency')
-   ax.set_xlim(bin_edges[0],bin_edges[-1])
+   ax.set_xlim(bin_edges[0],bin_edges[-2])
    plt.ylim([0., 1.])
    plt.legend(loc='best')
    plt.tight_layout()
    plt.savefig(dir+'/eff.pdf')
    plt.clf()
+   plt.close()
 
    #################
    # MISTAG CURVES #
@@ -346,15 +356,22 @@ def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
       ]
    
    for idx,curve in enumerate(curves) :
+      #print("label:",curve["label"])
       his_total,_ = np.histogram(curve["var"][curve["mask"]],bins=bin_edges)
       his_passed,_ = np.histogram(curve["var"][curve["mask"]&curve["condition"]],bins=bin_edges)
-      ax.errorbar(x=bin_edges[:-1], #bin_centres,
-                  y=[ x/y if y > 0. else 0. for x,y in zip(his_passed,his_total) ],
-                  yerr=[ np.sqrt(x)/y if y > 0. else 0. for x,y in zip(his_passed,his_total) ],
+      x=bin_edges[:-1]
+      y=[ x/y if y > 0 else 0. for x,y in zip(his_passed,his_total) ]
+      yhigh=[ binomial_hpdr(p,t)[1]-(p/t) if t > 0 else 0. for p,t in zip(his_passed,his_total) ]
+      ylow =[ (p/t)-binomial_hpdr(p,t)[0] if t > 0 else 0. for p,t in zip(his_passed,his_total) ]
+      yerr =[ylow,yhigh]
+      label='{:s} (mean={:5.3f})'.format(curve["label"],
+                                         float(his_passed.sum())/float(his_total.sum()) \
+                                            if his_total.sum() > 0 else 0.)
+      ax.errorbar(x=x,
+                  y=y,
+                  yerr=yerr,
                   #color=None,
-                  label='{:s} (mean={:6.4f})'.format(curve["label"],
-                                                     float(his_passed.sum())/float(his_total.sum()) \
-                                                        if his_total.sum() > 0 else 0.),
+                  label=label,
                   marker='o',
                   color=curve["colour"],
                   markerfacecolor="white",
@@ -368,9 +385,10 @@ def mauro(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
    plt.xlabel('Transverse momentum (GeV)')
    plt.ylabel('Mistag rate')
    plt.gca().set_yscale('log')
-   ax.set_xlim(bin_edges[0],bin_edges[-1])
+   ax.set_xlim(bin_edges[0],bin_edges[-2])
    ax.set_ylim([0.0001, 1.])
    plt.legend(loc='best')
    plt.tight_layout()
    plt.savefig(dir+'/mistag.pdf')
    plt.clf()
+   plt.close()
