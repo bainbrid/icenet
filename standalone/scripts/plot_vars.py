@@ -60,7 +60,9 @@ if not os.path.isdir(output_base) :
    os.makedirs(output_base)
 print("output_base:",output_base)
    
-files = [input_data+'/images.root']
+#files = [input_data+'/images.root']
+files = [input_data+'/temp_miniaod_test.root']
+#files = [input_data+'/output.root']
 
 ################################################################################
 print("##### Define features #####")
@@ -89,6 +91,7 @@ features = [
    'eid_sc_E',
    'eid_trk_p',
    'gsf_bdtout1'
+   'gsf_bdtout2'
 ]
 
 additional = [
@@ -125,41 +128,45 @@ for key,vals in events.items() :
    print('{} {}'.format(key.decode(),type(vals)))
 
 vars = [key for key in tree.keys() if key.startswith(b'gsf_') or key.startswith(b'pfgsf_') ]
+vars = [b'ele_mva_value',b'ele_mva_value_retrained']
 print('\n'.join([var.decode() for var in vars]))
 
 ################################################################################
 print("##### Some preprocessing #####")
 
-is_e = (events[b'is_e'] == True)
-is_gsf = (events[b'gsf_pt'] > 0.)
-mask = is_e&is_gsf
+is_e = events[b'is_e']
+is_egamma = events[b'is_egamma']
 
+#is_gsf = (events[b'gsf_pt'] > 0.)
 #is_gsf = is_gsf & (image_gsf_phi_del<1.56) & (abs(events[b'image_gsf_proj_R']-129.)<0.1)
+
+is_gsf = (events[b'has_gsf']) & (events[b'gsf_pt'] > 0.5) & (np.abs(events[b'gsf_eta']) < 2.5)
+is_pfgsf = (events[b'has_pfgsf']) & (events[b'pfgsf_pt'] > 0.5) & (np.abs(events[b'pfgsf_eta']) < 2.5)
 
 ################################################################################
 print("##### Print (pf)gsf_* variables #####")
 
-if False :
+if True :
 
    for var in vars :
       print("histogram:",var)
       f, ax = plt.subplots()
       bins = 100
-      counts1,bins = np.histogram(events[var][is_e&is_gsf].flatten(),bins=bins)
-      counts2,bins = np.histogram(events[var][~is_e&is_gsf].flatten(),bins=bins)
+      counts1,bins = np.histogram(events[var][is_e&is_gsf&is_egamma&(events[var]>-10.)].flatten(),bins=bins)
+      counts2,bins = np.histogram(events[var][~is_e&is_gsf&is_egamma&(events[var]>-10.)].flatten(),bins=bins)
       ax.hist(x=bins[:-1], 
               bins=bins,
               weights= counts2 / ( np.sum(counts2) if np.sum(counts2) > 0. else 1. ),
                  histtype='step',
               color='red',
-              label='~is_e&is_gsf'
+              label='~is_e&is_egamma&is_gsf',
               )
       ax.hist(x=bins[:-1], 
               bins=bins,
               weights= counts1 / ( np.sum(counts1) if np.sum(counts1) > 0. else 1. ),
               histtype='step',
               color='green',
-              label='is_e&is_gsf'
+              label='is_e&is_egamma&is_gsf',
               )
       #hep.histplot(counts,edges)
       plt.xlabel(var)
@@ -188,21 +195,21 @@ if True :
    for title,values in histos.items() :
       print("histogram:",title)
       f, ax = plt.subplots()
-      counts,bins = np.histogram(values[~is_e&is_gsf].flatten(),bins=100)
+      counts,bins = np.histogram(values[~is_e&is_egamma&is_gsf].flatten(),bins=100)
       ax.hist(x=bins[:-1], 
               bins=bins,
               weights=counts/np.sum(counts),
               histtype='step',
               color='red',
-              label='~is_e&is_gsf'
+              label='~is_e&is_egamma&is_gsf'
               )
-      counts,bins = np.histogram(values[is_e&is_gsf].flatten(),bins=bins)
+      counts,bins = np.histogram(values[is_e&is_egamma&is_gsf].flatten(),bins=bins)
       ax.hist(x=bins[:-1], 
               bins=bins,
               weights=counts/np.sum(counts),
               histtype='step',
               color='green',
-              label='is_e&is_gsf'
+              label='is_e&is_egamma&is_gsf'
               )
       #hep.histplot(counts,edges)
       plt.xlabel(title)
@@ -243,25 +250,25 @@ if True :
         "is_gsf&(events['gsf_pt']<2.0)" ) :
          ( events[b'gsf_pt'],
            events[b'gsf_mode_pt'],
-           is_gsf&(events[b'gsf_pt']<2.0) ),
+           is_e&is_egamma&is_gsf&(events[b'gsf_pt']<2.0) ),
       ( "gsf_pt",
         "gsf_pt_ov_gsf_mode_pt", 
         "is_gsf&(events['gsf_pt']<2.0)" ) :
          ( events[b'gsf_pt'],
            events[b'gsf_pt']/events[b'gsf_mode_pt'],
-           is_gsf&(events[b'gsf_pt']<2.0) ),
+           is_e&is_egamma&is_gsf&(events[b'gsf_pt']<2.0) ),
       ( "gsf_eta",
         "gsf_mode_eta", 
         "is_gsf&(events['gsf_pt']<2.0)" ) :
          ( events[b'gsf_eta'],
            events[b'gsf_mode_eta'],
-           is_gsf&(events[b'gsf_pt']<2.0) ),
+           is_e&is_egamma&is_gsf&(events[b'gsf_pt']<2.0) ),
       ( "gsf_eta",
         "gsf_eta_ov_gsf_mode_eta", 
         "is_gsf&(events['gsf_pt']<2.0)" ) :
          ( events[b'gsf_eta'],
            events[b'gsf_eta']/events[b'gsf_mode_eta'],
-           is_gsf&(events[b'gsf_pt']<2.0) ),
+           is_e&is_egamma&is_gsf&(events[b'gsf_pt']<2.0) ),
       }
    
    for (xlabel,ylabel,title),(x,y,cut) in histos2d.items() :
