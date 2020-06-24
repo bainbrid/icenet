@@ -64,7 +64,7 @@ if lxplus :
    #input_data='/eos/cms/store/cmst3/group/bpark/electron_training/2019Jul22/MINIAOD'
    input_data='~/eos/electrons/ntuples/BuToKJpsi_Toee_Mufilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/2020May20'
 else :
-   input_data='../data/2020May20'
+   input_data='../data'
 print("input_data:",input_data)
 if lxplus :
    cmssw_base='/afs/cern.ch/user/b/bainbrid/work/public/7-slc7/CMSSW_10_2_15'
@@ -81,12 +81,10 @@ if not os.path.isdir(output_base) :
 print("output_base:",output_base)
    
 files = [
-#  input_data+'/output.LATEST.root', # 1,797,425 entries
-   #input_data+'/output.root' # entries???
-   input_data+['/output_aod.root',
-               '/output_aod_test.root',
-               '/output_miniaod.root',
-               '/output_miniaod_test.root'][0]
+   #input_data+'/output.LATEST.root', # 1,797,425 entries
+   #input_data+'/2020May20/output_'+['aod.root','aod_test.root','miniaod.root','miniaod_test.root'][3]
+   input_data+'/temp_'+['miniaod.root','miniaod_test.root'][0]
+   #input_data+'/output.root'
 ]
 new_ntuples = any([ "LATEST" in x for x in files ])
 
@@ -120,14 +118,15 @@ additional = [
    'gen_pt','gen_eta', 
    'trk_pt','trk_eta','trk_charge','trk_dr',
    'gsf_pt','gsf_eta','gsf_dr','gsf_bdtout2','gsf_mode_pt',
-   'ele_pt','ele_eta','ele_dr','ele_mva_value','ele_mva_id',
+   'ele_pt','ele_eta','ele_dr',
+   'ele_mva_value','ele_mva_value_retrained','ele_mva_value_depth10','ele_mva_value_depth15',
    'evt','weight','rho',
    'tag_pt',
    'tag_eta','gsf_dxy','gsf_dz','gsf_nhits','gsf_chi2red',
 ]
 
 labelling = [
-   'is_e','is_other','is_egamma',
+   'is_e','is_egamma',
    'has_trk','has_seed','has_gsf','has_ele',
    'seed_trk_driven','seed_ecal_driven'
 ]
@@ -401,14 +400,45 @@ print("has_pfgsf_branches",has_pfgsf_branches)
 # plot AxE or Eff?
 AxE = True
 
-from plotting.seed import seed
-seed("../output/plots_train2/seed",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+# Reproduces Mauro's plot of ROC curves 
 
-from plotting.id import id
-id("../output/plots_train2/id",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+#from plotting.mauro import mauro
+#mauro("../output/plots_train2/mauro",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
 
-from plotting.mauro import mauro
-mauro("../output/plots_train2/mauro",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+# My Original plotting scripts 
 
-from plotting.miniaod import miniaod
-miniaod("../output/plots_train2/miniaod",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+#from plotting.seed import seed
+#seed("../output/plots_train2/seed",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+
+#from plotting.id import id
+#id("../output/plots_train2/id",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+
+#from plotting.miniaod import miniaod
+#miniaod("../output/plots_train2/miniaod",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+
+# Performance for BParking
+
+from plotting.bparking_trk import bparking_trk
+bparking_trk("../output/plots_train2/bparking_trk",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+
+from plotting.bparking_gsf import bparking_gsf
+bparking_gsf("../output/plots_train2/bparking_gsf",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+
+from plotting.bparking_binned import bparking_binned
+bparking_binned("../output/plots_train2/bparking_binned",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+
+from plotting.bparking_trigger import bparking_trigger
+bparking_trigger("../output/plots_train2/bparking_trigger",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+
+# Performance for UltraLegacy
+
+from plotting.ultralegacy_vloose import ultralegacy_vloose
+ultralegacy_vloose("../output/plots_train2/ultralegacy_vloose",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+
+from plotting.ultralegacy_tight import ultralegacy_tight
+ultralegacy_tight("../output/plots_train2/ultralegacy_tight",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
+
+# BParking performance plot for CMS week (Otto's talk)
+
+from plotting.cmsweek import cmsweek
+cmsweek("../output/plots_train2/cmsweek",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
