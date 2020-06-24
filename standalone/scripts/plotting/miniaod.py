@@ -100,11 +100,11 @@ def miniaod(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
             )
 
    id_fpr,id_tpr,id_score = roc_curve(test.is_e[has_ele],test['training_out'][has_ele])
-   id_auc = roc_auc_score(test.is_e[has_ele],test['training_out'][has_ele])
+   id_auc = roc_auc_score(test.is_e[has_ele],test['training_out'][has_ele]) if len(set(test.is_e[has_ele])) > 1 else 0.
    plt.plot(id_fpr*ele_fr, 
             id_tpr*ele_eff,
             linestyle='solid', color='black', linewidth=1.0,
-            label='ID, AUC={:.3f}'.format(id_auc))
+            label='Low-pT ID, AUC={:.3f}'.format(id_auc))
 
    ########################################
    # EGamma GSF tracks and PF GSF electrons
@@ -130,6 +130,13 @@ def miniaod(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
             markersize=8, linestyle='none',
             label='PF GSF electron')
 
+   pf_id_fpr,pf_id_tpr,pf_id_score = roc_curve(egamma.is_e[has_ele],egamma['ele_mva_value'][has_ele])
+   pf_id_auc = roc_auc_score(egamma.is_e[has_ele],egamma['ele_mva_value'][has_ele]) if len(set(egamma.is_e[has_ele])) > 1 else 0.
+   plt.plot(pf_id_fpr*pf_fr, 
+            pf_id_tpr*pf_eff,
+            linestyle='dashed', color='purple', linewidth=1.0,
+            label='PF ID, AUC={:.3f}'.format(pf_id_auc))
+
    #################
    # Working points
 
@@ -146,10 +153,10 @@ def miniaod(dir,test,egamma,has_pfgsf_branches=True,AxE=True) :
    x,y = id_fpr[id_ELE]*ele_fr,id_tpr[id_ELE]*ele_eff
    plt.plot([x], [y], marker='o', markerfacecolor='none', markeredgecolor='black', markersize=7)
    plt.text(x, y+0.03, "Loose", fontsize=8, ha='center', va='center', color='black' )
-   
+
    ##########
    # Finish up ... 
-   plt.legend(loc='upper left',framealpha=None,frameon=False)
+   plt.legend(loc='lower right',framealpha=None,frameon=False)
    plt.tight_layout()
    plt.savefig(dir+'/roc.pdf')
    plt.clf()
