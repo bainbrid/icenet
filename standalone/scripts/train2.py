@@ -442,8 +442,4 @@ ultralegacy_tight("../output/plots_train2/ultralegacy_tight",test,egamma,has_pfg
 
 from plotting.cmsweek import cmsweek
 cmsweek("../output/plots_train2/cmsweek",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
-
-
-from plotting.cmsweek import cmsweek
-cmsweek("../output/plots_train2/cmsweek",test,egamma,has_pfgsf_branches=has_pfgsf_branches,AxE=AxE)
  
