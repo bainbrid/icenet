@@ -31,7 +31,7 @@ default_collate_func = dataloader.default_collate
 
 data = []
 
-def parse_graph_data(X, VARS, features, Y=None, W=None, global_on=True, coord='ptetaphim', CPU_count=None):
+def parse_graph_data(X, VARS, features, Y=None, W=None, global_on=True, coord='ptetaphim', CPU_count=4):
     """
     Jagged array data into pytorch-geometric style Data format array.
     
@@ -43,7 +43,8 @@ def parse_graph_data(X, VARS, features, Y=None, W=None, global_on=True, coord='p
         W         :  (Re-)weighting array (if any, typically MC only)
         global_on :  Global features on / off
         coord     :  Coordinates used for nodes ('ptetaphim', 'pxpypze')
-        
+        CPU_count :  Number of CPU processes used. If None, set it automatically (might overflow RAM)
+
     Returns:
         Array of pytorch-geometric Data objects
     """
