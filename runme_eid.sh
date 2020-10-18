@@ -14,6 +14,6 @@ DATAPATH="/vols/cms/icenet/data/2020Oct16/"
 
 # Use * or other glob wildcards for filenames
 
-python ./analysis/eid_train.py --config $CONFIG --datapath $DATAPATH --datasets "output_0" #,1 #,2,3,4,5,6
-python ./analysis/eid_eval.py  --config $CONFIG --datapath $DATAPATH --datasets "output_0" #,1 #,2,3,4,5,6
+python ./analysis/eid_train.py --config $CONFIG --datapath $DATAPATH --datasets "output_{0,1,2,3,4,5,6,7,8}" #,1 #,2,3,4,5,6
+python ./analysis/eid_eval.py  --config $CONFIG --datapath $DATAPATH --datasets "output_9" #,1 #,2,3,4,5,6
 #python ./analysis/eid_visual_tensors.py --config $CONFIG --datapath $DATAPATH --datasets "output_0" #,1 #,2,3,4,5,6
