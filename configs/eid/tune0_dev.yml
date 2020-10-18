@@ -116,7 +116,7 @@ active_models:
 #  - gnet3
   - gnet2
 #  - flr0
-#  - xgb0
+  - xgb0
 #  - lgr0
 #  - xtx0
 #  - dmx0
