@@ -25,12 +25,14 @@ varnorm_tensor: 'zscore'        # Tensor variable normalization
 
 # ** Graph object construction **
 graph_param:
+  graph_on: False
   global_on: True
   coord: 'pxpypze'              # 'ptetaphim', 'pxpypze'
 
 
 # ** Image tensor object construction **
 image_param:
+  image_on: False
 
   # See the corresponding construction under common.py
   channels: 2                 # 1,2,...

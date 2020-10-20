@@ -54,10 +54,11 @@ def main() :
     ### Get input
     data, args, features = common.init()
 
-    data_graph = {}
-    data_graph['tst'] = graphio.parse_graph_data(X=data.tst.x, Y=data.tst.y, VARS=data.VARS,
-        features=features, global_on=args['graph_param']['global_on'], coord=args['graph_param']['coord'])
-    
+    data_graph = None
+    if args['graph_param']['graph_on'] == True :
+        data_graph = {}
+        data_graph['tst'] = graphio.parse_graph_data(X=data.tst.x, Y=data.tst.y, VARS=data.VARS,
+            features=features, global_on=args['graph_param']['global_on'], coord=args['graph_param']['coord'])
     
     #########################################################
     varname = 'ele_mva_value_depth15'
@@ -97,6 +98,8 @@ def saveit(func_predict, X, y, X_kin, VARS_kin, pt_edges, eta_edges, label):
     """
     ROC curve plotter wrapper function.
     """
+    if X_kin is None : return
+
     fig, ax, met = plots.binned_AUC(func_predict = func_predict, X = X, y = y, X_kin = X_kin, \
         VARS_kin = VARS_kin, pt_edges = pt_edges, eta_edges = eta_edges, label = label)
     
@@ -120,8 +123,8 @@ def evaluate(data, data_tensor, data_kin, data_graph, args):
     X        = data.tst.x
     y        = data.tst.y
     X_kin    = data_kin.tst.x
-    X_2D     = data_tensor['tst']
-    X_graph  = data_graph['tst']
+    X_2D     = data_tensor['tst'] if args['image_param']['image_on'] == True else None
+    X_graph  = data_graph['tst'] if args['graph_param']['graph_on'] == True else None
 
     VARS_kin = data_kin.VARS
     # --------------------------------------------------------------------
@@ -136,7 +139,7 @@ def evaluate(data, data_tensor, data_kin, data_graph, args):
     try:
 
         ### Tensor variable normalization
-        if args['varnorm_tensor'] == 'zscore':
+        if args['varnorm_tensor'] == 'zscore' and args['image_param']['image_on'] == True:
 
             print('\nZ-score normalizing tensor variables ...')
             X_mu_tensor, X_std_tensor = pickle.load(open(modeldir + '/zscore_tensor.dat', 'rb'))
@@ -161,7 +164,7 @@ def evaluate(data, data_tensor, data_kin, data_graph, args):
     # --------------------------------------------------------------------
     # For pytorch based
     X_ptr    = torch.from_numpy(X).type(torch.FloatTensor)
-    X_2D_ptr = torch.from_numpy(X_2D).type(torch.FloatTensor)
+    X_2D_ptr = torch.from_numpy(X_2D).type(torch.FloatTensor) if args['image_param']['image_on'] == True else None
     # --------------------------------------------------------------------
 
     # Loop over active models
@@ -171,11 +174,11 @@ def evaluate(data, data_tensor, data_kin, data_graph, args):
         param = args[f'{ID}_param']
         print(f'Training <{ID}> | {param} \n')
         
-        if   param['predict'] == 'torch_graph':
+        if   param['predict'] == 'torch_graph' and args['graph_param']['graph_on'] == True:
             func_predict = predict.pred_torch(args=args, param=param)
             saveit(func_predict = func_predict, X = X_graph, y = y, X_kin = X_kin, VARS_kin = VARS_kin, pt_edges = pt_edges, eta_edges = eta_edges, label = param['label'])
         
-        elif param['predict'] == 'graph_xgb':
+        elif param['predict'] == 'graph_xgb' and args['graph_param']['graph_on'] == True:
             func_predict = predict.pred_graph_xgb(args=args, param=param)
             saveit(func_predict = func_predict, X = X_graph, y = y, X_kin = X_kin, VARS_kin = VARS_kin, pt_edges = pt_edges, eta_edges = eta_edges, label = param['label'])
 
@@ -187,7 +190,7 @@ def evaluate(data, data_tensor, data_kin, data_graph, args):
             func_predict = predict.pred_xgb(args=args, param=param)
             saveit(func_predict = func_predict, X = X, y = y, X_kin = X_kin, VARS_kin = VARS_kin, pt_edges = pt_edges, eta_edges = eta_edges, label = param['label'])
 
-        elif param['predict'] == 'torch_image':
+        elif param['predict'] == 'torch_image' and args['image_param']['image_on'] == True:
             func_predict = predict.pred_torch(args=args, param=param)
 
             X_ = {}
@@ -199,11 +202,11 @@ def evaluate(data, data_tensor, data_kin, data_graph, args):
         #elif param['predict'] == 'xtx':
         #    train.train_xtx(X_trn=X_trn, Y_trn=Y_trn, X_val=X_val, Y_val=Y_val, data_kin=data_kin, args=args, param=param)
         
-        elif param['predict'] == 'torch_generic':
+        elif param['predict'] == 'torch_generic' and args['image_param']['image_on'] == True:
             func_predict = predict.pred_torch(args=args, param=param)
             saveit(func_predict = func_predict, X = X_ptr, y = y, X_kin = X_kin, VARS_kin = VARS_kin, pt_edges = pt_edges, eta_edges = eta_edges, label = param['label'])
 
-        elif param['predict'] == 'torch_flow':
+        elif param['predict'] == 'torch_flow' and args['image_param']['image_on'] == True:
             func_predict = predict.pred_flow(args=args, param=param, n_dims=X_ptr.shape[1])
             saveit(func_predict = func_predict, X = X_ptr, y = y, X_kin = X_kin, VARS_kin = VARS_kin, pt_edges = pt_edges, eta_edges = eta_edges, label = param['label'])
         else:

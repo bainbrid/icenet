@@ -223,12 +223,14 @@ def splitfactor(data, args):
     
     ### Pick active jagged array / "image" variables out
     j_ind, j_vars    = io.pick_vars(data, globals()['CMSSW_MVA_ID_IMAGE'])
-    
-    data_image       = copy.deepcopy(data)
-    data_image.trn.x = data.trn.x[:, j_ind]
-    data_image.val.x = data.val.x[:, j_ind]
-    data_image.tst.x = data.tst.x[:, j_ind]
-    data_image.VARS  = j_vars 
+
+    data_image = None
+    if args['image_param']['image_on'] == True :
+        data_image       = copy.deepcopy(data)
+        data_image.trn.x = data.trn.x[:, j_ind]
+        data_image.val.x = data.val.x[:, j_ind]
+        data_image.tst.x = data.tst.x[:, j_ind]
+        data_image.VARS  = j_vars
 
     # Use single channel tensors
     if   args['image_param']['channels'] == 1:
@@ -246,10 +248,12 @@ def splitfactor(data, args):
 
     # Pick tensor data out
     cprint(__name__ + f'.splitfactor: jagged2tensor processing ...', 'yellow')
-    data_tensor = {}
-    data_tensor['trn'] = aux.jagged2tensor(X=data_image.trn.x, VARS=j_vars, xyz=xyz, x_binedges=eta_binedges, y_binedges=phi_binedges)
-    data_tensor['val'] = aux.jagged2tensor(X=data_image.val.x, VARS=j_vars, xyz=xyz, x_binedges=eta_binedges, y_binedges=phi_binedges)
-    data_tensor['tst'] = aux.jagged2tensor(X=data_image.tst.x, VARS=j_vars, xyz=xyz, x_binedges=eta_binedges, y_binedges=phi_binedges)
+    data_tensor = None
+    if args['image_param']['image_on'] == True :
+        data_tensor = {}
+        data_tensor['trn'] = aux.jagged2tensor(X=data_image.trn.x, VARS=j_vars, xyz=xyz, x_binedges=eta_binedges, y_binedges=phi_binedges)
+        data_tensor['val'] = aux.jagged2tensor(X=data_image.val.x, VARS=j_vars, xyz=xyz, x_binedges=eta_binedges, y_binedges=phi_binedges)
+        data_tensor['tst'] = aux.jagged2tensor(X=data_image.tst.x, VARS=j_vars, xyz=xyz, x_binedges=eta_binedges, y_binedges=phi_binedges)
     
     ### Pick active scalar variables out
     s_ind, s_vars = io.pick_vars(data, globals()[args['inputvar']])

@@ -67,12 +67,13 @@ def main() :
     # --------------------------------------------------------------------
 
     ### Parse data into graphs
-    graph = {}
-    graph['trn'] = graphio.parse_graph_data(X=data.trn.x, Y=data.trn.y, VARS=data.VARS, 
-        features=features, global_on=args['graph_param']['global_on'], coord=args['graph_param']['coord'])
-    graph['val'] = graphio.parse_graph_data(X=data.val.x, Y=data.val.y, VARS=data.VARS,
-        features=features, global_on=args['graph_param']['global_on'], coord=args['graph_param']['coord'])
-    
+    graph = None
+    if args['graph_param']['graph_on'] == True:
+        graph = {}
+        graph['trn'] = graphio.parse_graph_data(X=data.trn.x, Y=data.trn.y, VARS=data.VARS,
+            features=features, global_on=args['graph_param']['global_on'], coord=args['graph_param']['coord'])
+        graph['val'] = graphio.parse_graph_data(X=data.val.x, Y=data.val.y, VARS=data.VARS,
+            features=features, global_on=args['graph_param']['global_on'], coord=args['graph_param']['coord'])
 
     ### Plot variables
     if args['plot_param']['basic_on'] == True:
@@ -109,7 +110,7 @@ def trainloop(data, data_tensor, data_kin, data_graph, trn_weights, args) :
     print(__name__ + f": Input with {data.trn.x.shape[0]} events and {data.trn.x.shape[1]} dimensions ")
 
     # @@ Tensor normalization @@
-    if args['varnorm_tensor'] == 'zscore':
+    if args['varnorm_tensor'] == 'zscore' and args['image_param']['image_on'] == True :
         
         print('\nZ-score normalizing tensor variables ...')
         X_mu_tensor, X_std_tensor = io.calc_zscore_tensor(data_tensor['trn'])
@@ -121,7 +122,7 @@ def trainloop(data, data_tensor, data_kin, data_graph, trn_weights, args) :
     
     # --------------------------------------------------------------------
 
-    # @@ Truncate outliers (component by component) from the training set @@
+    # @@ Truncate outliers (component by component) from the training set @@
     if args['outlier_param']['algo'] == 'truncate' :
         for j in range(data.trn.x.shape[1]):
 
@@ -169,7 +170,7 @@ def trainloop(data, data_tensor, data_kin, data_graph, trn_weights, args) :
         param = args[f'{ID}_param']
         print(f'Training <{ID}> | {param} \n')
 
-        if   param['train'] == 'graph':
+        if   param['train'] == 'graph' and args['graph_param']['graph_on'] == True:
             train.train_graph(data_trn=data_graph['trn'], data_val=data_graph['val'], args=args, param=param)
 
         elif param['train'] == 'graph_xgb':
@@ -181,7 +182,7 @@ def trainloop(data, data_tensor, data_kin, data_graph, trn_weights, args) :
         elif param['train'] == 'xgb':
             train.train_xgb(data=data, trn_weights=trn_weights, args=args, param=param)
 
-        elif param['train'] == 'cnn':
+        elif param['train'] == 'cnn' and args['image_param']['image_on'] == True:
             train.train_cnn(data=data, data_tensor=data_tensor, Y_trn=Y_trn, Y_val=Y_val, trn_weights=trn_weights, args=args, param=param)
             
         #elif param['train'] == 'xtx':
