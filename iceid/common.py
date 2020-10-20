@@ -16,9 +16,14 @@ import sys
 import yaml
 import numpy as np
 import torch
-import uproot
+import uproot4
+import awkward1 as ak
 
 from concurrent.futures import ThreadPoolExecutor
+
+# Command line arguments
+from glob import glob
+from braceexpand import braceexpand
 
 
 from termcolor import colored, cprint
@@ -40,13 +45,11 @@ def read_config():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config",   type = str, default='tune0')
     parser.add_argument("--datapath", type = str, default=".")
-    parser.add_argument("--datasets", type = str, default="0")
+    parser.add_argument("--datasets", type = str, default="*")
 
     cli = parser.parse_args()
     
-    # Input is [0,1,2,..]
-    cli.datasets = cli.datasets.split(',')
-
+    # -------------------------------------------------------------------
     ## Read configuration
     args = {}
     config_yaml_file = cli.config + '.yml'
@@ -55,11 +58,32 @@ def read_config():
             args = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
-
+            
     args['config'] = cli.config
+
+    # -------------------------------------------------------------------
+    # Do brace expansion
+    datasets = list(braceexpand(cli.datasets))
+
+    # Parse input files into a list
+    args['root_files'] = list()
+    for data in datasets:
+        filepath = glob(cli.datapath + '/' + data + '.root')
+        if filepath != []:
+            for i in range(len(filepath)):
+                args['root_files'].append(filepath[i])
+    # -------------------------------------------------------------------
+    
     print(args)
     print('')
-    print('torch.__version__: ' + torch.__version__)
+    print(" torch.__version__: " + torch.__version__)
+    print("")
+    print(" Try 'filename_*' ")
+    print(" Try 'filename_[0-99]' ")
+    print(" Try 'filename_0' ")
+    print(" Try 'filename_{0,3,4}' ")
+    print(" Google <glob wildcards> and brace expansion.")
+    print("")
 
     features = globals()[args['imputation_param']['var']]
 
@@ -92,14 +116,12 @@ def init(MAXEVENTS=None):
     # --------------------------------------------------------------------
 
     ### Load data
-    paths = []
-    for i in cli.datasets:
-        paths.append(cli.datapath + '/output_' + str(i) + '.root')
 
     # Background (0) and signal (1)
     class_id = [0,1]
-    data     = io.DATASET(func_loader=load_root_file_new, files=paths, class_id=class_id, frac=args['frac'], rngseed=args['rngseed'])
+    data     = io.DATASET(func_loader=load_root_file_new, files=args['root_files'], class_id=class_id, frac=args['frac'], rngseed=args['rngseed'])
     
+
     # @@ Imputation @@
     if args['imputation_param']['active']:
 
@@ -266,6 +288,16 @@ def splitfactor(data, args):
     return data, data_tensor, data_kin
 
 
+def slow_conversion(hdfarray):
+    return np.array(hdfarray)
+
+
+def fast_conversion(hdfarray, shape, dtype):
+    a    = np.empty(shape=shape, dtype=dtype)
+    a[:] = hdfarray[:]
+    return a
+
+
 def load_root_file_new(root_path, VARS=None, entrystart=0, entrystop=None, class_id = [], args=None):
     """ Loads the root file.
     
@@ -301,35 +333,44 @@ def load_root_file_new(root_path, VARS=None, entrystart=0, entrystop=None, class
     cprint( __name__ + f'.load_root_file: Loading with uproot from file ' + root_path, 'yellow')
     cprint( __name__ + f'.load_root_file: entrystart = {entrystart}, entrystop = {entrystop}')
 
-    file = uproot.open(root_path)
+    file = uproot4.open(root_path)
     events = file["ntuplizer"]["tree"]
 
+    print(events)
     print(events.name)
     print(events.title)
-    cprint(__name__ + f'.load_root_file: events.numentries = {events.numentries}', 'green')
+    #cprint(__name__ + f'.load_root_file: events.numentries = {events.numentries}', 'green')
 
     ### All variables
     if VARS is None:
-        VARS   = [x.decode() for x in events.keys()]
+        VARS = events.keys() #[x for x in events.keys()]
     #VARS_scalar = [x.decode() for x in events.keys() if b'image_' not in x]
-
-    # Turn into dictionaries
-    executor = ThreadPoolExecutor(4)
+    #print(VARS)
 
     # Check is it MC (based on the first event)
-    X_test = events.arrays('is_mc', outputtype=list, executor=executor, namedecode = "utf-8", entrystart=entrystart, entrystop=entrystop)
-    isMC   = bool(X_test[0][0])
+    X_test = events.arrays('is_mc', entry_start=entrystart, entry_stop=entrystop)
+    
+    isMC   = bool(X_test['0'])
     N      = len(X_test)
     print(__name__ + f'.load_root_file: isMC: {isMC}')
 
     # Now read the data
-    print(__name__ + '.load_root_file: Loading root file ...')
-    X = np.array(events.arrays(VARS, outputtype=list, executor=executor, namedecode = "utf-8", entrystart=entrystart, entrystop=entrystop))
-    X = X.T
+    print(__name__ + '.load_root_file: Loading root file variables ...')
+
+    # --------------------------------------------------------------
+    # Important to lead variables one-by-one (because one single np.assarray call takes too much RAM)
+
+    # Needs to be of object type numpy array to hold arbitrary objects (such as jagged arrays) !
+    X = np.empty((N, len(VARS)), dtype=object) 
+
+    for j in tqdm(range(len(VARS))):
+        x = events.arrays(VARS[j], library="np", how=list, entry_start=entrystart, entry_stop=entrystop)
+        X[:,j] = np.asarray(x)
+    # --------------------------------------------------------------
     Y = None
 
 
-    print(f'X.shape = {X.shape}')
+    print(__name__ + f'common: X.shape = {X.shape}')
     showmem()
 
     prints.printbar()
@@ -342,6 +383,9 @@ def load_root_file_new(root_path, VARS=None, entrystart=0, entrystop=None, class
         # @@ MC target definition here @@
         cprint(__name__ + f'.load_root_file: Computing MC <targetfunc> ...', 'yellow')
         Y = TARFUNC(events, entrystart=entrystart, entrystop=entrystop)
+        Y = np.asarray(Y).T
+
+        print(__name__ + f'common: Y.shape = {Y.shape}')
 
         # For info
         labels1 = ['is_e', 'is_egamma']
@@ -356,9 +400,10 @@ def load_root_file_new(root_path, VARS=None, entrystart=0, entrystop=None, class
         cprint(__name__ + f'.load_root_file: Prior MC <filterfunc>: {len(X)} events', 'green')
         cprint(__name__ + f'.load_root_file: After MC <filterfunc>: {sum(indmc)} events ', 'green')
         prints.printbar()
-
-        Y = Y[indmc]
+        
+        
         X = X[indmc]
+        Y = Y[indmc].squeeze() # Remove useless dimension
     # =================================================================
     
     # -----------------------------------------------------------------
@@ -380,5 +425,8 @@ def load_root_file_new(root_path, VARS=None, entrystart=0, entrystop=None, class
 
     showmem()
     prints.printbar()
-        
+
+    # ** REMEMBER TO CLOSE **
+    file.close()
+
     return X, Y, VARS
