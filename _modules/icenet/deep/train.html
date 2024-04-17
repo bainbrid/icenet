@@ -32,7 +32,7 @@
             
           </a>
               <div class="version">
-                0.0.9.9
+                0.1.0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -185,7 +185,9 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/icefit.html#module-icefit.lognormal">icefit.lognormal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/icefit.html#icefit.lognormal.create_label"><code class="docutils literal notranslate"><span class="pre">create_label()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/icefit.html#icefit.lognormal.lognormal_param"><code class="docutils literal notranslate"><span class="pre">lognormal_param()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/icefit.html#icefit.lognormal.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/icefit.html#icefit.lognormal.rand_lognormal"><code class="docutils literal notranslate"><span class="pre">rand_lognormal()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/icefit.html#icefit.lognormal.rand_powexp"><code class="docutils literal notranslate"><span class="pre">rand_powexp()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/icefit.html#icefit.lognormal.test_accuracy"><code class="docutils literal notranslate"><span class="pre">test_accuracy()</span></code></a></li>
@@ -981,9 +983,8 @@
     <span class="n">x</span>                <span class="o">=</span> <span class="n">data_trn</span><span class="o">.</span><span class="n">x</span>
     <span class="n">y_true</span>           <span class="o">=</span> <span class="n">data_trn</span><span class="o">.</span><span class="n">y</span>
     <span class="n">weights</span>          <span class="o">=</span> <span class="n">data_trn</span><span class="o">.</span><span class="n">w</span>
-    <span class="n">args</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_trn</span><span class="o">.</span><span class="n">ids</span>
     
-    <span class="n">pred_func</span> <span class="o">=</span> <span class="n">predict</span><span class="o">.</span><span class="n">pred_cutset</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="n">new_param</span><span class="p">)</span>
+    <span class="n">pred_func</span> <span class="o">=</span> <span class="n">predict</span><span class="o">.</span><span class="n">pred_cutset</span><span class="p">(</span><span class="n">ids</span><span class="o">=</span><span class="n">data_trn</span><span class="o">.</span><span class="n">ids</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="n">new_param</span><span class="p">)</span>
     
     <span class="c1"># Apply cutset</span>
     <span class="n">y_pred</span>    <span class="o">=</span> <span class="n">pred_func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
