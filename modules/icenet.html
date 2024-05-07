@@ -36,7 +36,7 @@
             
           </a>
               <div class="version">
-                0.1.0.2
+                0.1.0.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -2407,7 +2407,7 @@ returns the loss. Optional for most optimizers.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.tools.aux.ak2numpy">
-<span class="sig-name descname"><span class="pre">ak2numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">null_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">999.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux.html#ak2numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux.ak2numpy" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ak2numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">null_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-999.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux.html#ak2numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux.ak2numpy" title="Link to this definition">¶</a></dt>
 <dd><p>Unzip awkward array to numpy array per column (awkward Record)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2438,6 +2438,26 @@ returns the loss. Optional for most optimizers.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Matrix output</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icenet.tools.aux.auc_score">
+<span class="sig-name descname"><span class="pre">auc_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux.html#auc_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux.auc_score" title="Link to this definition">¶</a></dt>
+<dd><p>AUC-ROC via numerical intergration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fpr</strong> – false positive rate array</p></li>
+<li><p><strong>tpr</strong> – true positive rate array</p></li>
+</ul>
+</dd>
+</dl>
+<p>Call sort_fpr_tpr before this function for numerical stability.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AUC score</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2785,6 +2805,7 @@ Output: [{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}, {10}, {11}]</p>
 <dt class="sig sig-object py" id="icenet.tools.aux.red">
 <span class="sig-name descname"><span class="pre">red</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exclude_MVA_vars'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'include_MVA_vars'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux.html#red"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux.red" title="Link to this definition">¶</a></dt>
 <dd><p>Reduce the input set variables of X (start with all include, then evaluate exclude, then evaluate include)</p>
+<p>Remember that using python sets() is not necessarily stable over runs ! (do not rely on the order of sets)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2824,6 +2845,12 @@ Output: [{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}, {10}, {11}]</p>
 <dd class="field-odd"><p>a,b,b-a</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icenet.tools.aux.sort_fpr_tpr">
+<span class="sig-name descname"><span class="pre">sort_fpr_tpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux.html#sort_fpr_tpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux.sort_fpr_tpr" title="Link to this definition">¶</a></dt>
+<dd><p>For numerical stability with negative weighted events</p>
 </dd></dl>
 
 <dl class="py function">
@@ -4173,7 +4200,8 @@ ax:  figure axis</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.tools.process.plot_XYZ_wrap">
 <span class="sig-name descname"><span class="pre">plot_XYZ_wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_predict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_kin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids_kin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_RAW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids_RAW</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/process.html#plot_XYZ_wrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.process.plot_XYZ_wrap" title="Link to this definition">¶</a></dt>
-<dd><p>Arbitrary plot wrapper function.</p>
+<dd><p>Arbitrary plot steering function.
+Add new plot types here, steered from plots.yml</p>
 </dd></dl>
 
 <dl class="py function">
