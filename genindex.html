@@ -32,7 +32,7 @@
             
           </a>
               <div class="version">
-                0.1.0.8
+                0.1.0.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -50,6 +50,7 @@
 <li class="toctree-l2"><a class="reference internal" href="notes/installation.html#automated-setup">Automated setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notes/installation.html#initialize-the-environment">Initialize the environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notes/installation.html#possible-problems">Possible problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notes/installation.html#show-installation-paths-of-binaries">Show installation paths of binaries</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notes/installation.html#gpu-support-commands">GPU-support commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notes/installation.html#htcondor-gpu-job-submission">HTCondor GPU job submission</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notes/installation.html#conda-virtual-environment-commands">Conda virtual environment commands</a></li>
@@ -70,6 +71,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/icebrem.html">icebrem</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/icebrem.html#module-icebrem.common">icebrem.common</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/icebrem.html#icebrem.common.load_root_file"><code class="docutils literal notranslate"><span class="pre">load_root_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/icebrem.html#icebrem.common.process_root"><code class="docutils literal notranslate"><span class="pre">process_root()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/icebrem.html#icebrem.common.splitfactor"><code class="docutils literal notranslate"><span class="pre">splitfactor()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="modules/icebrk.html">icebrk</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/icebrk.html#icebrk-common">icebrk.common</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/icebrk.html#module-icebrk.cutstats">icebrk.cutstats</a><ul>
@@ -485,6 +495,14 @@
 <li class="toctree-l3"><a class="reference internal" href="modules/icetrg.html#icetrg.common.load_root_file"><code class="docutils literal notranslate"><span class="pre">load_root_file()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/icetrg.html#icetrg.common.process_root"><code class="docutils literal notranslate"><span class="pre">process_root()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/icetrg.html#icetrg.common.splitfactor"><code class="docutils literal notranslate"><span class="pre">splitfactor()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/icezee.html">icezee</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/icezee.html#module-icezee.common">icezee.common</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/icezee.html#icezee.common.load_root_file"><code class="docutils literal notranslate"><span class="pre">load_root_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/icezee.html#icezee.common.splitfactor"><code class="docutils literal notranslate"><span class="pre">splitfactor()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -986,6 +1004,8 @@
         <li><a href="modules/icenet.html#icenet.deep.da.GradientReversal.forward">(GradientReversal method)</a>
 </li>
         <li><a href="modules/icenet.html#icenet.deep.da.GradientReversalFunction.forward">(GradientReversalFunction static method)</a>
+</li>
+        <li><a href="modules/icenet.html#icenet.deep.dmlp.LinearLayer.forward">(LinearLayer method)</a>
 </li>
         <li><a href="modules/icenet.html#icenet.deep.lzmlp.LipschitzLinear.forward">(LipschitzLinear method)</a>
 </li>
@@ -1816,6 +1836,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/icedqcd.html#icedqcd.limits.limit_wrapper_dict">limit_wrapper_dict() (in module icedqcd.limits)</a>
 </li>
+      <li><a href="modules/icenet.html#icenet.deep.dmlp.LinearLayer">LinearLayer (class in icenet.deep.dmlp)</a>
+</li>
       <li><a href="modules/icenet.html#icenet.deep.lzmlp.LipschitzLinear">LipschitzLinear (class in icenet.deep.lzmlp)</a>
 </li>
       <li><a href="modules/icefit.html#icefit.icelimit.LL_splusb">LL_splusb() (in module icefit.icelimit)</a>
@@ -1844,15 +1866,13 @@
 </li>
       <li><a href="modules/icenet.html#icenet.tools.iceroot.load_tree">load_tree() (in module icenet.tools.iceroot)</a>
 </li>
-      <li><a href="modules/icenet.html#icenet.tools.iceroot.load_tree_stats">load_tree_stats() (in module icenet.tools.iceroot)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/icenet.html#icenet.tools.iceroot.load_tree_stats">load_tree_stats() (in module icenet.tools.iceroot)</a>
+</li>
       <li><a href="modules/icenet.html#icenet.deep.vae.VAE.log_pxz">log_pxz() (VAE method)</a>
 </li>
       <li><a href="modules/icenet.html#icenet.deep.losstools.log_softmax">log_softmax() (in module icenet.deep.losstools)</a>
-</li>
-      <li><a href="modules/icenet.html#icenet.deep.losstools.log_sum_exp">log_sum_exp() (in module icenet.deep.losstools)</a>
 </li>
       <li><a href="modules/icenet.html#icenet.deep.losstools.LOGIT_L1_loss">LOGIT_L1_loss() (in module icenet.deep.losstools)</a>
 </li>
