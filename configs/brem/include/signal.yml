@@ -1,7 +1,7 @@
 # [0]
 SIGNAL: &SIGNAL
-  path: 'travis-stash/input/icebrem/output_signal_1M'
-  files: 'output_[0-4].root'
+  path: 'local-stash/input/icebrem/output_signal_1M'
+  files: 'output_{0,1,2,3,4}.root'
   xs: 1.
   model_param: null
   force_xs: false
