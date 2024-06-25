@@ -36,7 +36,7 @@
             
           </a>
               <div class="version">
-                0.1.0.9
+                0.1.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -1145,13 +1145,13 @@ if they are intended to be used for in <code class="docutils literal notranslate
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.deep.dbnf.load_models">
-<span class="sig-name descname"><span class="pre">load_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelnames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modeldir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/dbnf.html#load_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.dbnf.load_models" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelnames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modeldir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/dbnf.html#load_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.dbnf.load_models" title="Link to this definition">¶</a></dt>
 <dd><p>Load models from files</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.deep.dbnf.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EPS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/dbnf.html#predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.dbnf.predict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EPS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/dbnf.html#predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.dbnf.predict" title="Link to this definition">¶</a></dt>
 <dd><p>2-class density ratio pdf(x,S) / pdf(x,B) for each vector x.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1159,7 +1159,7 @@ if they are intended to be used for in <code class="docutils literal notranslate
 <li><p><strong>param</strong> – input parameters</p></li>
 <li><p><strong>X</strong> – pytorch tensor of vectors</p></li>
 <li><p><strong>models</strong> – list of model objects</p></li>
-<li><p><strong>return_prob</strong> – return pdf(S) / (pdf(S)+pdf(B)), else pdf(S)/pdf(B)</p></li>
+<li><p><strong>return_prob</strong> – return pdf(S) / (pdf(S) + pdf(B)), else pdf(S) / pdf(B)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1170,7 +1170,7 @@ if they are intended to be used for in <code class="docutils literal notranslate
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.deep.dbnf.train">
-<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trn_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trn_weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modeldir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/dbnf.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.dbnf.train" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trn_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trn_weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modeldir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/dbnf.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.dbnf.train" title="Link to this definition">¶</a></dt>
 <dd><p>Train the model density.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1181,6 +1181,7 @@ if they are intended to be used for in <code class="docutils literal notranslate
 <li><p><strong>trn_x</strong> – training vectors</p></li>
 <li><p><strong>val_x</strong> – validation vectors</p></li>
 <li><p><strong>trn_weights</strong> – training weights</p></li>
+<li><p><strong>val_weights</strong> – validation weights</p></li>
 <li><p><strong>param</strong> – parameters</p></li>
 <li><p><strong>modeldir</strong> – directory to save the model</p></li>
 </ul>
@@ -1237,6 +1238,22 @@ is at most that of the gradient from the main network.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>total gradient norm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icenet.deep.deeptools.set_scheduler">
+<span class="sig-name descname"><span class="pre">set_scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/deeptools.html#set_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.deeptools.set_scheduler" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> – optimizers for different models</p></li>
+<li><p><strong>param</strong> – setup parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>torch scheduler</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1814,22 +1831,70 @@ respective nodes <span class="math notranslate nohighlight">\(i\)</span> and <sp
 <dd><p>Binary Cross Entropy loss</p>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="icenet.deep.losstools.FocalWithLogitsLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FocalWithLogitsLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#FocalWithLogitsLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.FocalWithLogitsLoss" title="Link to this definition">¶</a></dt>
+<dd><p>Focal Loss with logits as input</p>
+<p><a class="reference external" href="https://arxiv.org/abs/1708.02002">https://arxiv.org/abs/1708.02002</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="icenet.deep.losstools.FocalWithLogitsLoss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#FocalWithLogitsLoss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.FocalWithLogitsLoss.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.deep.losstools.LOGIT_L1_loss">
 <span class="sig-name descname"><span class="pre">LOGIT_L1_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logit_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#LOGIT_L1_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.LOGIT_L1_loss" title="Link to this definition">¶</a></dt>
-<dd><p>Logit magnitude L1-regularization</p>
+<dd><p>Logit magnitude L1-regularization sum <a href="#id5"><span class="problematic" id="id6">|z|</span></a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.deep.losstools.LOGIT_L2_loss">
 <span class="sig-name descname"><span class="pre">LOGIT_L2_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logit_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#LOGIT_L2_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.LOGIT_L2_loss" title="Link to this definition">¶</a></dt>
-<dd><p>Logit magnitude L2-regularization</p>
+<dd><p>Logit magnitude L2-regularization sum <a href="#id1"><span class="problematic" id="id2">|</span></a>z|^2</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="icenet.deep.losstools.LqBernoulliWithLogitsLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LqBernoulliWithLogitsLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#LqBernoulliWithLogitsLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.LqBernoulliWithLogitsLoss" title="Link to this definition">¶</a></dt>
+<dd><p>L_q likelihood for the Bernoulli case</p>
+<p><a class="reference external" href="https://arxiv.org/pdf/1002.4533">https://arxiv.org/pdf/1002.4533</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="icenet.deep.losstools.LqBernoulliWithLogitsLoss.L_q">
+<span class="sig-name descname"><span class="pre">L_q</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#LqBernoulliWithLogitsLoss.L_q"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.LqBernoulliWithLogitsLoss.L_q" title="Link to this definition">¶</a></dt>
+<dd><p>when q -&gt; 1, then L_q -&gt; log(x)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icenet.deep.losstools.LqBernoulliWithLogitsLoss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#LqBernoulliWithLogitsLoss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.LqBernoulliWithLogitsLoss.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="icenet.deep.losstools.LQ_loss">
-<span class="sig-name descname"><span class="pre">LQ_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#LQ_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.LQ_loss" title="Link to this definition">¶</a></dt>
-<dd><p>L_q loss (TBD)</p>
+<dt class="sig sig-object py" id="icenet.deep.losstools.Lq_binary_loss">
+<span class="sig-name descname"><span class="pre">Lq_binary_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#Lq_binary_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.Lq_binary_loss" title="Link to this definition">¶</a></dt>
+<dd><p>L_q Bernoulli loss</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1855,6 +1920,12 @@ respective nodes <span class="math notranslate nohighlight">\(i\)</span> and <sp
 <span class="sig-name descname"><span class="pre">binary_cross_entropy_logprob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_phat_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_phat_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#binary_cross_entropy_logprob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.binary_cross_entropy_logprob" title="Link to this definition">¶</a></dt>
 <dd><p>Per instance weighted binary cross entropy loss (y can be a scalar between [0,1])
 (negative log-likelihood)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icenet.deep.losstools.binary_focal_loss">
+<span class="sig-name descname"><span class="pre">binary_focal_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/losstools.html#binary_focal_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.losstools.binary_focal_loss" title="Link to this definition">¶</a></dt>
+<dd><p>Focal Cross Entropy loss</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2088,7 +2159,7 @@ registered hooks while the latter silently ignores them.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.deep.optimize.printloss">
 <span class="sig-name descname"><span class="pre">printloss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/optimize.html#printloss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.optimize.printloss" title="Link to this definition">¶</a></dt>
-<dd><p>Loss string printer</p>
+<dd><p>Loss torch string printer</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2098,12 +2169,11 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.deep.optimize.test">
-<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/optimize.html#test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.optimize.test" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/optimize.html#test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.optimize.test" title="Link to this definition">¶</a></dt>
 <dd><p>Pytorch based testing routine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> – ‘test’ or ‘validate’, for example</p></li>
 <li><p><strong>model</strong> – pytorch geometric model</p></li>
 <li><p><strong>loader</strong> – pytorch geometric dataloader</p></li>
 <li><p><strong>device</strong> – ‘cpu’ or ‘device’</p></li>
@@ -2557,20 +2627,6 @@ registered hooks while the latter silently ignores them.</p>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="icenet.deep.train.train_xtx">
-<span class="sig-name descname"><span class="pre">train_xtx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'params':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_trn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_trn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_kin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/deep/train.html#train_xtx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.deep.train.train_xtx" title="Link to this definition">¶</a></dt>
-<dd><p>Train binned neural model (untested function; TODO add weights)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>train_*</strong> (<em>See other</em>)</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>trained model</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 <section id="module-icenet.deep.vae">
 <span id="icenet-deep-vae"></span><h3>icenet.deep.vae<a class="headerlink" href="#module-icenet.deep.vae" title="Link to this heading">¶</a></h3>
@@ -2805,13 +2861,13 @@ returns the loss. Optional for most optimizers.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.tools.aux_torch.load_torch_model">
-<span class="sig-name descname"><span class="pre">load_torch_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_start_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux_torch.html#load_torch_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux_torch.load_torch_model" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_torch_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_start_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux_torch.html#load_torch_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux_torch.load_torch_model" title="Link to this definition">¶</a></dt>
 <dd><p>PyTorch model loader</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.tools.aux_torch.save_torch_model">
-<span class="sig-name descname"><span class="pre">save_torch_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux_torch.html#save_torch_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux_torch.save_torch_model" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">save_torch_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux_torch.html#save_torch_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux_torch.save_torch_model" title="Link to this definition">¶</a></dt>
 <dd><p>PyTorch model saver</p>
 </dd></dl>
 
@@ -2841,7 +2897,7 @@ returns the loss. Optional for most optimizers.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.tools.aux.ak2numpy">
-<span class="sig-name descname"><span class="pre">ak2numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">null_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-999.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux.html#ak2numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux.ak2numpy" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ak2numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">null_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-999.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux.html#ak2numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux.ak2numpy" title="Link to this definition">¶</a></dt>
 <dd><p>Unzip awkward array to numpy array per column (awkward Record)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2974,7 +3030,7 @@ returns the loss. Optional for most optimizers.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<p>cartesian_product(<a href="#id1"><span class="problematic" id="id2">*</span></a>[np.array([1,2,3]), np.array([100,200,500])])</p>
+<p>cartesian_product(<a href="#id3"><span class="problematic" id="id4">*</span></a>[np.array([1,2,3]), np.array([100,200,500])])</p>
 </dd></dl>
 
 <dl class="py function">
@@ -3005,6 +3061,8 @@ returns the loss. Optional for most optimizers.</p>
 <dt class="sig sig-object py" id="icenet.tools.aux.create_model_filename">
 <span class="sig-name descname"><span class="pre">create_model_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filetype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.dat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux.html#create_model_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux.create_model_filename" title="Link to this definition">¶</a></dt>
 <dd><p>Create model filename</p>
+<p>This function automatically takes the minimum validation loss epoch / iteration,
+if epoch == - 1, by first reading the last epoch / iteration file.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -3036,6 +3094,12 @@ with 1 &lt;= M &lt;= N number of ones (hot bits) (default N)</p>
 <dt class="sig sig-object py" id="icenet.tools.aux.generatebinary_fixed">
 <span class="sig-name descname"><span class="pre">generatebinary_fixed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux.html#generatebinary_fixed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux.generatebinary_fixed" title="Link to this definition">¶</a></dt>
 <dd><p>Generate all combinations of n bits with fixed k ones.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icenet.tools.aux.get_datetime">
+<span class="sig-name descname"><span class="pre">get_datetime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/aux.html#get_datetime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.aux.get_datetime" title="Link to this definition">¶</a></dt>
+<dd><p>Return datetime string of style ‘2024-06-04–14-45-07’</p>
 </dd></dl>
 
 <dl class="py function">
@@ -4408,7 +4472,7 @@ other dimensions evaluated at zero=(0,0,…0) (thus z-normalized with 0-mean is 
 <li><p><strong>ids</strong> – Variable names (list of length D)</p></li>
 <li><p><strong>weights</strong> – Event weights</p></li>
 <li><p><strong>y</strong> – Class labels per event (list of length N)</p></li>
-<li><p><strong>round_threshold</strong> – Correlation matrix <a href="#id3"><span class="problematic" id="id4">|C|</span></a> &lt; threshold to set matrix elements to zero</p></li>
+<li><p><strong>round_threshold</strong> – Correlation matrix <a href="#id7"><span class="problematic" id="id8">|C|</span></a> &lt; threshold to set matrix elements to zero</p></li>
 <li><p><strong>targetdir</strong> – Output plot directory</p></li>
 <li><p><strong>colorbar</strong> – Colorbar on the plot</p></li>
 </ul>
@@ -4457,7 +4521,7 @@ so we see that also integrated class fractions are equalized (or not) after weig
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.tools.plots.plot_train_evolution_multi">
-<span class="sig-name descname"><span class="pre">plot_train_evolution_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trn_aucs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_aucs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.85</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/plots.html#plot_train_evolution_multi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.plots.plot_train_evolution_multi" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_train_evolution_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trn_aucs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_aucs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.85</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/plots.html#plot_train_evolution_multi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.plots.plot_train_evolution_multi" title="Link to this definition">¶</a></dt>
 <dd><p>Training evolution plots.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -4544,7 +4608,7 @@ ax:  figure axis</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.tools.prints.print_variables">
-<span class="sig-name descname"><span class="pre">print_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/prints.html#print_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.prints.print_variables" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">print_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/prints.html#print_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.prints.print_variables" title="Link to this definition">¶</a></dt>
 <dd><p>Print statistics of X</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -4559,6 +4623,12 @@ ax:  figure axis</p>
 <dd class="field-even"><p>prettyprint table of stats</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icenet.tools.prints.print_weights">
+<span class="sig-name descname"><span class="pre">print_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/prints.html#print_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.prints.print_weights" title="Link to this definition">¶</a></dt>
+<dd><p>Print event weights table</p>
 </dd></dl>
 
 <dl class="py function">
@@ -4806,7 +4876,7 @@ pdf     : computed pdfs</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="icenet.tools.reweight.map_xyw">
 <span class="sig-name descname"><span class="pre">map_xyw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_class</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/icenet/tools/reweight.html#map_xyw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icenet.tools.reweight.map_xyw" title="Link to this definition">¶</a></dt>
-<dd><p>For AIRW</p>
+<dd><p>For AIRW helper</p>
 </dd></dl>
 
 <dl class="py function">

@@ -32,7 +32,7 @@
             
           </a>
               <div class="version">
-                0.1.0.9
+                0.1.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -654,6 +654,8 @@
 </li>
       <li><a href="modules/icenet.html#icenet.deep.losstools.binary_cross_entropy_logprob">binary_cross_entropy_logprob() (in module icenet.deep.losstools)</a>
 </li>
+      <li><a href="modules/icenet.html#icenet.deep.losstools.binary_focal_loss">binary_focal_loss() (in module icenet.deep.losstools)</a>
+</li>
       <li><a href="modules/icenet.html#icenet.deep.cnn.CNN.binarypredict">binarypredict() (CNN method)</a>
 
       <ul>
@@ -974,6 +976,8 @@
 </li>
       <li><a href="modules/icefit.html#icefit.peakfit.fit_task">fit_task() (in module icefit.peakfit)</a>
 </li>
+      <li><a href="modules/icenet.html#icenet.deep.losstools.FocalWithLogitsLoss">FocalWithLogitsLoss (class in icenet.deep.losstools)</a>
+</li>
       <li><a href="modules/icenet.html#icenet.deep.fastkan.AttentionWithFastKANTransform.forward">forward() (AttentionWithFastKANTransform method)</a>
 
       <ul>
@@ -995,6 +999,8 @@
 </li>
         <li><a href="modules/icenet.html#icenet.deep.fastkan.FastKANLayer.forward">(FastKANLayer method)</a>
 </li>
+        <li><a href="modules/icenet.html#icenet.deep.losstools.FocalWithLogitsLoss.forward">(FocalWithLogitsLoss method)</a>
+</li>
         <li><a href="modules/icenet.html#icenet.deep.gcnn.GCN.forward">(GCN method)</a>
 </li>
         <li><a href="modules/icenet.html#icenet.deep.gcnn.GCN_layer.forward">(GCN_layer method)</a>
@@ -1008,6 +1014,8 @@
         <li><a href="modules/icenet.html#icenet.deep.dmlp.LinearLayer.forward">(LinearLayer method)</a>
 </li>
         <li><a href="modules/icenet.html#icenet.deep.lzmlp.LipschitzLinear.forward">(LipschitzLinear method)</a>
+</li>
+        <li><a href="modules/icenet.html#icenet.deep.losstools.LqBernoulliWithLogitsLoss.forward">(LqBernoulliWithLogitsLoss method)</a>
 </li>
         <li><a href="modules/icenet.html#icenet.deep.lzmlp.LZMLP.forward">(LZMLP method)</a>
 </li>
@@ -1112,6 +1120,8 @@
 </li>
       <li><a href="modules/icenet.html#icenet.deep.dmlp.get_act">get_act() (in module icenet.deep.dmlp)</a>
 </li>
+      <li><a href="modules/icenet.html#icenet.tools.aux.get_datetime">get_datetime() (in module icenet.tools.aux)</a>
+</li>
       <li><a href="modules/icebrk.html#icebrk.tools.get_first_indices">get_first_indices() (in module icebrk.tools)</a>
 </li>
       <li><a href="modules/icefit.html#icefit.jacobian.get_full_hessian">get_full_hessian() (in module icefit.jacobian)</a>
@@ -1124,10 +1134,10 @@
 </li>
       <li><a href="modules/icenet.html#icenet.deep.lzmlp.LipschitzLinear.get_lipschitz_constant">get_lipschitz_constant() (LipschitzLinear method)</a>
 </li>
-      <li><a href="modules/icenet.html#icenet.deep.lzmlp.LZMLP.get_lipschitz_loss">get_lipschitz_loss() (LZMLP method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/icenet.html#icenet.deep.lzmlp.LZMLP.get_lipschitz_loss">get_lipschitz_loss() (LZMLP method)</a>
+</li>
       <li><a href="modules/icenet.html#icenet.algo.analytic.get_Lorentz_edge_features">get_Lorentz_edge_features() (in module icenet.algo.analytic)</a>
 </li>
       <li><a href="modules/icehgcal.html#icehgcal.graphio.get_node_features">get_node_features() (in module icehgcal.graphio)</a>
@@ -1834,6 +1844,8 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/icenet.html#icenet.deep.losstools.LqBernoulliWithLogitsLoss.L_q">L_q() (LqBernoulliWithLogitsLoss method)</a>
+</li>
       <li><a href="modules/icedqcd.html#icedqcd.limits.limit_wrapper_dict">limit_wrapper_dict() (in module icedqcd.limits)</a>
 </li>
       <li><a href="modules/icenet.html#icenet.deep.dmlp.LinearLayer">LinearLayer (class in icenet.deep.dmlp)</a>
@@ -1894,7 +1906,9 @@
 </li>
       <li><a href="modules/icenet.html#icenet.deep.losstools.loss_wrapper">loss_wrapper() (in module icenet.deep.losstools)</a>
 </li>
-      <li><a href="modules/icenet.html#icenet.deep.losstools.LQ_loss">LQ_loss() (in module icenet.deep.losstools)</a>
+      <li><a href="modules/icenet.html#icenet.deep.losstools.Lq_binary_loss">Lq_binary_loss() (in module icenet.deep.losstools)</a>
+</li>
+      <li><a href="modules/icenet.html#icenet.deep.losstools.LqBernoulliWithLogitsLoss">LqBernoulliWithLogitsLoss (class in icenet.deep.losstools)</a>
 </li>
       <li><a href="modules/icenet.html#icenet.deep.lzmlp.LZMLP">LZMLP (class in icenet.deep.lzmlp)</a>
 </li>
@@ -2377,6 +2391,8 @@
 </li>
       <li><a href="modules/icenet.html#icenet.tools.prints.print_variables">print_variables() (in module icenet.tools.prints)</a>
 </li>
+      <li><a href="modules/icenet.html#icenet.tools.prints.print_weights">print_weights() (in module icenet.tools.prints)</a>
+</li>
       <li><a href="modules/icenet.html#icenet.tools.prints.printbar">printbar() (in module icenet.tools.prints)</a>
 </li>
       <li><a href="modules/icenet.html#icenet.tools.prints.printbranch">printbranch() (in module icenet.tools.prints)</a>
@@ -2556,6 +2572,8 @@
       <li><a href="modules/icenet.html#icenet.tools.stx.set_constructor">set_constructor() (in module icenet.tools.stx)</a>
 </li>
       <li><a href="modules/iceplot.html#iceplot.iceplot.set_global_style">set_global_style() (in module iceplot.iceplot)</a>
+</li>
+      <li><a href="modules/icenet.html#icenet.deep.deeptools.set_scheduler">set_scheduler() (in module icenet.deep.deeptools)</a>
 </li>
       <li><a href="modules/icenet.html#icenet.deep.tempscale.LogitsWithTemperature.set_temperature">set_temperature() (LogitsWithTemperature method)</a>
 
@@ -2822,8 +2840,6 @@
       <li><a href="modules/icenet.html#icenet.deep.train.train_torch_graph">train_torch_graph() (in module icenet.deep.train)</a>
 </li>
       <li><a href="modules/icenet.html#icenet.deep.iceboost.train_xgb">train_xgb() (in module icenet.deep.iceboost)</a>
-</li>
-      <li><a href="modules/icenet.html#icenet.deep.train.train_xtx">train_xtx() (in module icenet.deep.train)</a>
 </li>
       <li><a href="modules/icenet.html#icenet.tools.stx.tree_node">tree_node (class in icenet.tools.stx)</a>
 </li>

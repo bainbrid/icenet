@@ -32,7 +32,7 @@
             
           </a>
               <div class="version">
-                0.1.0.9
+                0.1.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -609,29 +609,23 @@
     
     <span class="n">X_MC</span> <span class="o">=</span> <span class="n">frame_mc</span><span class="p">[</span><span class="n">LOAD_VARS</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
     
-    <span class="c1">## Pre-computed weights (kinematic re-weight x gen event weight x ...)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    W_MC    = frame_mc[[&#39;weight&#39;]].to_numpy().squeeze()</span>
-<span class="sd">    W_MC_rw = frame_mc[[&#39;rw_weights&#39;]].to_numpy().squeeze()</span>
-<span class="sd">    W_MC    = W_MC / W_MC_rw # Extract out raw &quot;gen&quot; weights</span>
-<span class="sd">    W_MC    = W_MC / np.sum(W_MC) * len(W_MC)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="c1"># Use all events with weight 1</span>
-    <span class="n">W_MC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_MC</span><span class="p">))</span>
-    
     <span class="c1"># Label = 0</span>
     <span class="n">Y_MC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_MC</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     
+    <span class="c1">## Pre-computed weights (gen event weight x CMS weights)</span>
+    <span class="n">W_MC</span> <span class="o">=</span> <span class="n">frame_mc</span><span class="p">[[</span><span class="s1">&#39;weight&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+    
     <span class="c1"># ** Drop negative weight events **</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    ind  = W_MC &lt; 0</span>
-<span class="sd">    if np.sum(ind) &gt; 0:</span>
-<span class="sd">        cprint(__name__ + f&#39;.load_root_file: Dropping negative weight events ({np.sum(ind)/len(ind):0.3f})&#39;, &#39;red&#39;)</span>
-<span class="sd">        W_MC = W_MC[~ind] # Boolean NOT</span>
-<span class="sd">        X_MC = X_MC[~ind]</span>
-<span class="sd">        Y_MC = Y_MC[~ind]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ind</span>  <span class="o">=</span> <span class="n">W_MC</span> <span class="o">&lt;</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.load_root_file: Dropping negative weight events (</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span><span class="si">:</span><span class="s1">0.3f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+        <span class="n">W_MC</span> <span class="o">=</span> <span class="n">W_MC</span><span class="p">[</span><span class="o">~</span><span class="n">ind</span><span class="p">]</span> <span class="c1"># Boolean NOT</span>
+        <span class="n">X_MC</span> <span class="o">=</span> <span class="n">X_MC</span><span class="p">[</span><span class="o">~</span><span class="n">ind</span><span class="p">]</span>
+        <span class="n">Y_MC</span> <span class="o">=</span> <span class="n">Y_MC</span><span class="p">[</span><span class="o">~</span><span class="n">ind</span><span class="p">]</span>
+    
+    <span class="c1"># Renormalize to the event count</span>
+    <span class="n">W_MC</span> <span class="o">=</span> <span class="n">W_MC</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">W_MC</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">W_MC</span><span class="p">)</span>
+    
     
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;X_MC.shape = </span><span class="si">{</span><span class="n">X_MC</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;W_MC.shape = </span><span class="si">{</span><span class="n">W_MC</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -761,32 +755,28 @@
     
     <span class="c1"># -------------------------------------------------------------------------</span>
     <span class="c1">### ** DEBUG TEST -- special transform for &quot;zero-inflated&quot; variables **</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    special_var = [&#39;probe_esEffSigmaRR&#39;,</span>
-<span class="sd">                   &#39;probe_pfChargedIso&#39;,</span>
-<span class="sd">                   &#39;probe_ecalPFClusterIso&#39;,</span>
-<span class="sd">                   &#39;probe_trkSumPtHollowConeDR03&#39;,</span>
-<span class="sd">                   &#39;probe_trkSumPtSolidConeDR04&#39;]</span>
-<span class="sd">    </span>
-<span class="sd">    # Thresholds</span>
-<span class="sd">    dT          = [0.1, 0.1, 0.1, 0.1, 0.1]</span>
-<span class="sd">    </span>
-<span class="sd">    for i, v in enumerate(special_var):</span>
-<span class="sd">        </span>
-<span class="sd">        try:</span>
-<span class="sd">            ind = data.find_ind(v)</span>
-<span class="sd">        except:</span>
-<span class="sd">            cprint(__name__ + f&#39;.splitfactor: Could not find variable &quot;{v}&quot; -- continue&#39;, &#39;red&#39;)</span>
-<span class="sd">        </span>
-<span class="sd">        cprint(__name__ + f&#39;.splitfactor: Pre-transforming variable &quot;{v}&quot; with dT &lt; {dT[i]}&#39;, &#39;magenta&#39;)</span>
-<span class="sd">        </span>
-<span class="sd">        mask              = np.abs(data.x[:,ind] &lt; dT[i])</span>
-<span class="sd">        data.x[mask, ind] = np.random.triangular(left=-1, mode=-0.75, right=dT[i], size=np.sum(mask))</span>
-<span class="sd">        data.x[:,ind]     = np.log1p(data.x[:,ind] + 1)</span>
-<span class="sd">        </span>
-<span class="sd">        # Change the variable name</span>
-<span class="sd">        data.ids[ind] = f&#39;DQL__{v}&#39;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">special_var</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;probe_esEffSigmaRR&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;probe_pfChargedIso&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;probe_ecalPFClusterIso&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;probe_trkSumPtHollowConeDR03&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;probe_trkSumPtSolidConeDR04&#39;</span><span class="p">]</span>
+    
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">special_var</span><span class="p">):</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">find_ind</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.splitfactor: Could not find variable &quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&quot; -- continue&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+            <span class="k">continue</span>
+        
+        <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.splitfactor: Pre-transforming variable &quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&quot; with log1p&#39;</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">)</span>
+        
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span><span class="n">ind</span><span class="p">])</span>
+        
+        <span class="c1"># Change the variable name</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">ids</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;DQL__</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span>
+    
     <span class="c1"># -------------------------------------------------------------------------</span>
     
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s1">&#39;data_MI&#39;</span><span class="p">:</span> <span class="n">data_MI</span><span class="p">,</span> <span class="s1">&#39;data_kin&#39;</span><span class="p">:</span> <span class="n">data_kin</span><span class="p">,</span> <span class="s1">&#39;data_deps&#39;</span><span class="p">:</span> <span class="n">data_deps</span><span class="p">,</span> <span class="s1">&#39;data_tensor&#39;</span><span class="p">:</span> <span class="n">data_tensor</span><span class="p">,</span> <span class="s1">&#39;data_graph&#39;</span><span class="p">:</span> <span class="n">data_graph</span><span class="p">}</span></div>
