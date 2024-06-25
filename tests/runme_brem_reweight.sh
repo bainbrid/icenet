@@ -5,8 +5,8 @@
 # Run with: maxevents=10000; source runme.sh
 
 CONFIG="tune0_reweight.yml"
-DATAPATH="." # yml points to ./travis-stash/input/icebrem
-MCMAP="map_mc.yml"
+DATAPATH="."
+MCMAP="map_mc_test.yml" # uses travis-stash/input/icebrem
 #DATASETS="output_*.root"
 
 if [ ${maxevents+x} ]; then MAX="--maxevents $maxevents"; else MAX=""; fi

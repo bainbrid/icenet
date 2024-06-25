@@ -56,15 +56,9 @@ train_runmode:
 
   ## Reweighting setup
   reweight: true
-<<<<<<< HEAD
   reweight_mode: 'write'          # 'write', 'load'
-  reweight_file: null                 # null for automatic, or string for specific
-  
-=======
-  reweight_mode: 'write'              # 'write', 'load'
-  reweight_file: 'reweight_train.pkl' # differential reweighting model file
+  reweight_file: null             # null for automatic, or string for specific
 
->>>>>>> 29f8134d (tweaks)
   reweight_param: &REWEIGHT_PARAM
     
     equal_frac: true              # Equalize integrated class fractions
@@ -79,21 +73,26 @@ train_runmode:
     # Differential reweighting param
     diff_param:
 
-      maxevents: 1000000          # Maximum number of events for the PDF construction
+      maxevents: 1000000              # Maximum number of events for the PDF construction
+      renorm_weight_to_count: True    # Renormalize sum(weights) == sum(counts) per class
+
       var:  ['gsf_pt', 'gsf_eta']
-#      var:  ['gsf_pt', 'rho']
-      type: 'pseudo-ND'           # 'ML', 'pseudo-ND', '2D', '1D'
-      # TypeError: Cannot cast array data from dtype([('gsf_pt', '<f4'), ...]) to dtype('float32') according to the rule 'unsafe'
+      # var:  ['gsf_pt', 'gsf_eta', 'rho']
+      type: '2D'                                  # 'AIRW', 'pseudo-ND', '2D', '1D'
 
       hist_param:
-        pseudo_type: 'product'                    # 'product', 'geometric_mean'
-        bins:  [[0.1, 20.0, 40], [-2.5, 2.5, 40]] # Make sure the bounds cover the phase space
+
+	pseudo_type: 'product'                    # 'product', 'geometric_mean'
+
+	bins:  [[0.1, 20.0, 40], [-2.5, 2.5, 40]] # Make sure the bounds cover the phase space
         binmode:  ['log10', 'linear']             # 'log10' or 'linear' or 'edges' (custom array) binning
         transform: [null, null]                   # 'log10', 'sqrt', 'square', null
-#        bins:  [[0.1, 20.0, 20], [0, 30, 30]] # Make sure the bounds cover the phase space
-#        binmode:  ['linear', 'linear']   # 'log10' or 'linear' or 'edges' (custom array) binning
-#        transform: [null, null]             # 'log10', 'sqrt', 'square', null
-        max_reg: 10.0 # Maximum weight cut-off regularization
+
+	# bins:  [[0.1, 20.0, 40], [0, 30, 40]]   # Make sure the bounds cover the phase space
+	# binmode:  ['linear', 'linear']          # 'log10' or 'linear' or 'edges' (custom array) binning
+	# transform: [null, null]                 # 'log10', 'sqrt', 'square', null
+
+	max_reg: 10.0 # Maximum weight cut-off regularization
       
       AIRW_param:
         active_model: xgb3Drw     # Under models.yml
@@ -130,15 +129,9 @@ eval_runmode:
   modeltag:  null
   
   reweight: true
-<<<<<<< HEAD
   reweight_mode: 'load'          # 'write', 'load'
-  reweight_file: null                 # null for automatic, or string for specific
+  reweight_file: null            # null for automatic, or string for specific
   
-=======
-  reweight_mode: 'load' # 'write', 'load'
-  reweight_file: 'reweight_train.pkl'
-
->>>>>>> 29f8134d (tweaks)
   reweight_param: *REWEIGHT_PARAM
 
   models:  !include configs/brem/models_reweight.yml

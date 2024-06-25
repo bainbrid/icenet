@@ -6,7 +6,7 @@
 
 CONFIG="tune0.yml"
 DATAPATH="."
-MCMAP="map_mc_test.yml"
+MCMAP="map_mc_test.yml" # uses travis-stash/input/icebrem
 #DATASETS="output_*.root"
 
 if [ ${maxevents+x} ]; then MAX="--maxevents $maxevents"; else MAX=""; fi
