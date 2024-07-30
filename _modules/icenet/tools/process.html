@@ -32,7 +32,7 @@
             
           </a>
               <div class="version">
-                0.1.1.4
+                0.1.1.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -552,6 +552,7 @@
 <span class="kn">from</span> <span class="nn">icenet.tools</span> <span class="kn">import</span> <span class="n">aux</span>
 <span class="kn">from</span> <span class="nn">icenet.tools</span> <span class="kn">import</span> <span class="n">reweight</span>
 <span class="kn">from</span> <span class="nn">icenet.tools</span> <span class="kn">import</span> <span class="n">plots</span>
+<span class="kn">from</span> <span class="nn">icenet.tools</span> <span class="kn">import</span> <span class="n">supertune</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
@@ -563,7 +564,6 @@
 <span class="n">corr_mstats</span>       <span class="o">=</span> <span class="p">[]</span>
 <span class="n">ROC_binned_mstats</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">ROC_binned_mlabel</span> <span class="o">=</span> <span class="p">[]</span>
-
 <span class="c1"># **************************</span>
 
 <div class="viewcode-block" id="read_cli">
@@ -577,24 +577,27 @@
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span>          <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="s1">&#39;tune0.yml&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--datapath&quot;</span><span class="p">,</span>        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--datasets&quot;</span><span class="p">,</span>        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--tag&quot;</span><span class="p">,</span>             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="s1">&#39;tag0&#39;</span><span class="p">)</span>
     
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--maxevents&quot;</span><span class="p">,</span>       <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span> <span class="c1"># GLOBAL POWER CONTROL</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--use_conditional&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span> <span class="c1"># GLOBAL POWER CONTROL</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--use_cache&quot;</span><span class="p">,</span>       <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--fastplot&quot;</span><span class="p">,</span>        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--grid_id&quot;</span><span class="p">,</span>         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--grid_nodes&quot;</span><span class="p">,</span>      <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--grid_id&quot;</span><span class="p">,</span>         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>    <span class="c1"># Condor/Oracle execution variables</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--grid_nodes&quot;</span><span class="p">,</span>      <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>    <span class="c1"># Condor/Oracle</span>
     
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--inputmap&quot;</span><span class="p">,</span>        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--modeltag&quot;</span><span class="p">,</span>        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--modeltag&quot;</span><span class="p">,</span>        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="c1"># Use this for multiple parallel runs</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--run_id&quot;</span><span class="p">,</span>          <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="s1">&#39;latest&#39;</span><span class="p">)</span>
+    
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--num_cpus&quot;</span><span class="p">,</span>        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>    <span class="c1"># Fixed number of CPUs</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--supertune&quot;</span><span class="p">,</span>       <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="c1"># Generic cli override</span>
     
     <span class="n">cli</span>      <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="n">cli_dict</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">cli</span><span class="p">)</span>
-
+    
     <span class="k">return</span> <span class="n">cli</span><span class="p">,</span> <span class="n">cli_dict</span></div>
+
 
 
 
@@ -663,6 +666,7 @@
     <span class="n">new_args</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">new_args</span><span class="p">[</span><span class="s1">&#39;rootname&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;rootname&#39;</span><span class="p">]</span>
     <span class="n">new_args</span><span class="p">[</span><span class="s1">&#39;rngseed&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;rngseed&#39;</span><span class="p">]</span>
+    <span class="n">new_args</span><span class="p">[</span><span class="s1">&#39;num_cpus&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_cpus&#39;</span><span class="p">]</span>
     <span class="n">new_args</span><span class="p">[</span><span class="s1">&#39;inputvars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;inputvars&#39;</span><span class="p">]</span>
     
     <span class="c1"># -----------------------------------------------------</span>
@@ -714,12 +718,21 @@
     <span class="n">args</span>     <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">new_args</span><span class="p">)</span>
 
     <span class="c1"># -------------------------------------------------------------------</span>
-    <span class="c1">## Commandline override of yaml variables</span>
+    <span class="c1">## Specific commandline override of yaml variables</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cli_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.read_config: </span><span class="si">{</span><span class="n">config_yaml_file</span><span class="si">}</span><span class="s1"> &lt;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&gt; default value cli-override with &lt;</span><span class="si">{</span><span class="n">cli_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s1">&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+            <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.read_config: </span><span class="si">{</span><span class="n">config_yaml_file</span><span class="si">}</span><span class="s1"> &quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&quot; default value cli-override with value </span><span class="si">{</span><span class="n">cli_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
             <span class="n">args</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cli_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">()</span>
+    
+    <span class="c1"># -------------------------------------------------------------------</span>
+    <span class="c1">## Supertune generic commandline override of yaml (dictionary) content</span>
+    
+    <span class="k">if</span> <span class="n">cli_dict</span><span class="p">[</span><span class="s1">&#39;supertune&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.read_config: </span><span class="si">{</span><span class="n">config_yaml_file</span><span class="si">}</span><span class="s1"> default value cli-override with --supertune syntax:&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">supertune</span><span class="o">.</span><span class="n">supertune</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">config_string</span><span class="o">=</span><span class="n">cli_dict</span><span class="p">[</span><span class="s1">&#39;supertune&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
     
     <span class="c1"># -------------------------------------------------------------------</span>
     <span class="c1">## 1. Create the first level hash</span>
@@ -849,13 +862,8 @@
         
         <span class="c1"># ----------------------------------------------------------------</span>
         <span class="c1">## Save args to yaml as a checkpoint of the run configuration</span>
-        <span class="nb">dir</span>              <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">makedir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;plotdir&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">runmode</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        
-        <span class="kn">import</span> <span class="nn">yaml</span>
-        
-        <span class="n">args_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s1">/args.yml&#39;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="nb">dir</span> <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">makedir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;plotdir&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">runmode</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">aux</span><span class="o">.</span><span class="n">yaml_dump</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s1">/args.yml&#39;</span><span class="p">)</span>
         <span class="c1"># ----------------------------------------------------------------</span>
     
     <span class="c1"># &quot;Simplified&quot; data reader</span>
@@ -1039,9 +1047,8 @@
             <span class="n">gc</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
         
         <span class="c1"># Save args</span>
-        <span class="kn">import</span> <span class="nn">yaml</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;.yml&#39;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">cache_filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;.yml&#39;</span><span class="p">)</span>
+        <span class="n">aux</span><span class="o">.</span><span class="n">yaml_dump</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">fname</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
@@ -1073,9 +1080,8 @@
             <span class="n">gc</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
         
         <span class="c1"># Save args</span>
-        <span class="kn">import</span> <span class="nn">yaml</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;.yml&#39;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">cache_filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;.yml&#39;</span><span class="p">)</span>
+        <span class="n">aux</span><span class="o">.</span><span class="n">yaml_dump</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">fname</span><span class="p">)</span>
         
     <span class="k">else</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
@@ -1469,6 +1475,8 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
     
     <span class="c1"># Loop over active models</span>
+    <span class="n">exceptions</span> <span class="o">=</span> <span class="mi">0</span>
+    
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;active_models&#39;</span><span class="p">])):</span>
 
         <span class="c1"># Collect garbage</span>
@@ -1618,9 +1626,13 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.train_models: Exception occured, check the model definition! -- continue&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
-    
+            <span class="n">exceptions</span> <span class="o">+=</span> <span class="mi">1</span>
+
     <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.train_models: [done]&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
     
+    <span class="k">if</span> <span class="n">exceptions</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.train_models: Number of fatal exceptions = </span><span class="si">{</span><span class="n">exceptions</span><span class="si">}</span><span class="s1"> [check your data / model definitions]&#39;</span><span class="p">)</span>
+
     <span class="k">return</span></div>
 
 
@@ -1954,13 +1966,13 @@
             <span class="n">targetdir</span> <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">makedir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;plotdir&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">runmode</span><span class="si">}</span><span class="s1">/distributions/kinematic/&#39;</span><span class="p">)</span>
             <span class="n">plots</span><span class="o">.</span><span class="n">plotvars</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data_kin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data_kin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data_kin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data_kin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">ids</span><span class="p">,</span>           
                 <span class="n">targetdir</span><span class="o">=</span><span class="n">targetdir</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;training re-weight reference class: </span><span class="si">{</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;reweight_param&#39;</span><span class="p">][</span><span class="s1">&#39;reference_class&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">param</span><span class="p">)</span>
+                <span class="n">num_cpus</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_cpus&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">param</span><span class="p">)</span>
         
         <span class="c1">### Plot MVA input variable plots</span>
         <span class="n">targetdir</span> <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">makedir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;plotdir&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">runmode</span><span class="si">}</span><span class="s1">/distributions/MVA-input/&#39;</span><span class="p">)</span>
         <span class="n">plots</span><span class="o">.</span><span class="n">plotvars</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">w</span><span class="p">,</span>  <span class="n">ids</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">ids</span><span class="p">,</span>
             <span class="n">targetdir</span><span class="o">=</span><span class="n">targetdir</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;training re-weight reference class: </span><span class="si">{</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;reweight_param&#39;</span><span class="p">][</span><span class="s1">&#39;reference_class&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">param</span><span class="p">)</span>
+            <span class="n">num_cpus</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_cpus&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">param</span><span class="p">)</span>
 
     <span class="c1">### Correlations</span>
     <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_param&#39;</span><span class="p">][</span><span class="s1">&#39;corrmat&#39;</span><span class="p">][</span><span class="s1">&#39;active&#39;</span><span class="p">]:</span>
