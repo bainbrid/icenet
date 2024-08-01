@@ -32,7 +32,7 @@
             
           </a>
               <div class="version">
-                0.1.1.5
+                0.1.2.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -534,15 +534,19 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">gc</span>
 
 <span class="kn">import</span> <span class="nn">numba</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">termcolor</span> <span class="kn">import</span> <span class="n">cprint</span>
 
 <span class="kn">import</span> <span class="nn">sklearn</span>
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
 <span class="kn">import</span> <span class="nn">scipy</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
+
+<span class="c1"># ------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">icenet</span> <span class="kn">import</span> <span class="nb">print</span>
+<span class="c1"># ------------------------------------------</span>
 
 
 <div class="viewcode-block" id="yaml_dump">
@@ -576,13 +580,77 @@
         <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">yaml_file</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">NoSortDumper</span><span class="p">)</span></div>
 
 
+
+<div class="viewcode-block" id="recursive_concatenate">
+<a class="viewcode-back" href="../../../modules/icenet.html#icenet.tools.aux.recursive_concatenate">[docs]</a>
+<span class="k">def</span> <span class="nf">recursive_concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">max_batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Concatenate a list of arrays in a recursive way</span>
+<span class="sd">    (to avoid possible problems with one big concatenation e.g. with Awkward)</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        array_list:      a list of Awkward or Numpy arrays</span>
+<span class="sd">        max_batch_size:  maximum number of list elements per concatenation</span>
+<span class="sd">        axis:            axis to concatenate over</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        concatenated array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">array_list</span><span class="p">)</span>
+    
+    <span class="c1"># Base case</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">array_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># Concatenate directly</span>
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">max_batch_size</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ak</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">ak</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    
+    <span class="c1"># Split the list into two halves and recursively concatenate each half</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mid</span>   <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># handle odd length</span>
+        <span class="n">left</span>  <span class="o">=</span> <span class="n">recursive_concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">[:</span><span class="n">mid</span><span class="p">],</span> <span class="n">max_batch_size</span><span class="o">=</span><span class="n">max_batch_size</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">recursive_concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">[</span><span class="n">mid</span><span class="p">:],</span> <span class="n">max_batch_size</span><span class="o">=</span><span class="n">max_batch_size</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">ak</span><span class="o">.</span><span class="n">Array</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">ak</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">ak</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="concatenate_and_clean">
+<a class="viewcode-back" href="../../../modules/icenet.html#icenet.tools.aux.concatenate_and_clean">[docs]</a>
+<span class="k">def</span> <span class="nf">concatenate_and_clean</span><span class="p">(</span><span class="n">array_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Concatenate a list of arrays and clean memory</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        array_list: a list of Awkward or numpy arrays</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        concatenated array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ak</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    
+    <span class="k">del</span> <span class="n">array_list</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
 <div class="viewcode-block" id="set_random_seed">
 <a class="viewcode-back" href="../../../modules/icenet.html#icenet.tools.aux.set_random_seed">[docs]</a>
 <span class="k">def</span> <span class="nf">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set random seeds</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.set_random_seed: </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s1"> (random, numpy, torch)&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s1"> (random, numpy, torch)&#39;</span><span class="p">)</span>
     
     <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -600,6 +668,26 @@
 <span class="sd">    Return datetime string of style &#39;2024-06-04--14-45-07&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="q_exp">
+<a class="viewcode-back" href="../../../modules/icenet.html#icenet.tools.aux.q_exp">[docs]</a>
+<span class="k">def</span> <span class="nf">q_exp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    q-exponent</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="n">exp_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span>
+    <span class="k">return</span> <span class="n">exp_</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1E-4</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">q</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">q</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="q_log">
+<a class="viewcode-back" href="../../../modules/icenet.html#icenet.tools.aux.q_log">[docs]</a>
+<span class="k">def</span> <span class="nf">q_log</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    q-logarithm</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="n">log_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span>    
+    <span class="k">return</span> <span class="n">log_</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1E-4</span> <span class="k">else</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">q</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">q</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="inverse_sigmoid">
@@ -765,10 +853,10 @@
         <span class="n">reduced</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span> <span class="c1"># Make it deterministic order</span>
         
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.red: Included input variables: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ids</span><span class="p">)[</span><span class="n">mask</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
-            <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.red: Excluded input variables: </span><span class="si">{</span><span class="n">reduced</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Included input variables: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ids</span><span class="p">)[</span><span class="n">mask</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Excluded input variables: </span><span class="si">{</span><span class="n">reduced</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.red: Using a full set of input variables&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Using a full set of input variables&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
     
     <span class="k">if</span>   <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span>
@@ -848,38 +936,68 @@
     <span class="k">return</span> <span class="n">load_ids</span></div>
 
 
-
-<div class="viewcode-block" id="parse_vars">
-<a class="viewcode-back" href="../../../modules/icenet.html#icenet.tools.aux.parse_vars">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_vars</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+<div class="viewcode-block" id="pick_index">
+<a class="viewcode-back" href="../../../modules/icenet.html#icenet.tools.aux.pick_index">[docs]</a>
+<span class="k">def</span> <span class="nf">pick_index</span><span class="p">(</span><span class="n">all_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parse a series of key-value pairs and return a dictionary</span>
+<span class="sd">    Return indices in all_ids corresponding to vars</span>
+<span class="sd">    </span>
+<span class="sd">    (vars can contain regexp)</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        all_ids: list of strings, e.g. [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;]</span>
+<span class="sd">        vars:    list of string to pick, e.g. [&#39;a&#39;, &#39;c&#39;] or [&#39;.*&#39;]</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        index array, variable names list</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="n">var_names</span> <span class="o">=</span> <span class="n">process_regexp_ids</span><span class="p">(</span><span class="n">all_ids</span><span class="o">=</span><span class="n">all_ids</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="nb">vars</span><span class="p">)</span>
+    <span class="n">pick_ind</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">all_ids</span><span class="p">,</span> <span class="n">var_names</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">items</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">parse_var</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-            <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="k">return</span> <span class="n">d</span></div>
+    <span class="k">return</span> <span class="n">pick_ind</span><span class="p">,</span> <span class="n">var_names</span></div>
 
+
+
+<span class="c1">#def parse_vars(items):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    Parse a series of key-value pairs and return a dictionary</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    d = {}</span>
+<span class="c1">#</span>
+<span class="c1">#    if items:</span>
+<span class="c1">#        for item in items:</span>
+<span class="c1">#            key, value = parse_var(item)</span>
+<span class="c1">#            d[key] = value</span>
+<span class="c1">#    return d</span>
 
 
 <div class="viewcode-block" id="ak2numpy">
 <a class="viewcode-back" href="../../../modules/icenet.html#icenet.tools.aux.ak2numpy">[docs]</a>
-<span class="k">def</span> <span class="nf">ak2numpy</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">ak</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">null_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="mf">999.0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">ak2numpy</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">ak</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">null_value</span><span class="p">:</span> <span class="nb">float</span><span class="o">=-</span><span class="mf">999.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unzip awkward array to numpy array per column (awkward Record)</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        x:      awkward array</span>
-<span class="sd">        fields: record field names to extract</span>
+<span class="sd">        x:            awkward array</span>
+<span class="sd">        fields:       record field names to extract</span>
+<span class="sd">        null_value:   missing element value</span>
+<span class="sd">        dtype:        final numpy array dtype</span>
+<span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        numpy array with columns ordered as &#39;fields&#39; parameter</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">null_value</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)),</span> <span class="n">null_value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)):</span>
-        <span class="n">out</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">ak</span><span class="o">.</span><span class="n">unzip</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]]))</span>
+        
+        <span class="n">y</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">isMaskedArray</span><span class="p">(</span><span class="n">y</span><span class="p">):</span> <span class="c1"># Process missing elements</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">null_value</span><span class="p">)</span>
+        
+        <span class="n">out</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+    
     <span class="k">return</span> <span class="n">out</span></div>
 
 
@@ -887,7 +1005,7 @@
 <div class="viewcode-block" id="jagged_ak_to_numpy">
 <a class="viewcode-back" href="../../../modules/icenet.html#icenet.tools.aux.jagged_ak_to_numpy">[docs]</a>
 <span class="k">def</span> <span class="nf">jagged_ak_to_numpy</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">scalar_vars</span><span class="p">,</span> <span class="n">jagged_vars</span><span class="p">,</span> <span class="n">jagged_maxdim</span><span class="p">,</span>
-                       <span class="n">entry_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">entry_stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">null_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="mf">999.0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">):</span>
+                       <span class="n">entry_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">entry_stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">null_value</span><span class="p">:</span> <span class="nb">float</span><span class="o">=-</span><span class="mf">999.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Transform jagged awkward array to fixed dimensional numpy data</span>
 <span class="sd">    </span>
@@ -936,7 +1054,7 @@
 <div class="viewcode-block" id="jagged2matrix">
 <a class="viewcode-back" href="../../../modules/icenet.html#icenet.tools.aux.jagged2matrix">[docs]</a>
 <span class="k">def</span> <span class="nf">jagged2matrix</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">scalar_vars</span><span class="p">,</span> <span class="n">jagged_vars</span><span class="p">,</span> <span class="n">jagged_dim</span><span class="p">,</span>
-    <span class="n">entry_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">entry_stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">null_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="mf">999.0</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;columnar&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">):</span>
+    <span class="n">entry_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">entry_stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">null_value</span><span class="p">:</span> <span class="nb">float</span><span class="o">=-</span><span class="mf">999.0</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;columnar&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Transform a &quot;jagged&quot; event container to a matrix (rows ~ event, columns ~ variables)</span>
 <span class="sd">    </span>
@@ -961,7 +1079,7 @@
     <span class="n">mem_size</span> <span class="o">=</span> <span class="n">N</span><span class="o">*</span><span class="n">D</span><span class="o">*</span><span class="mi">32</span><span class="o">/</span><span class="mi">8</span><span class="o">/</span><span class="mi">1024</span><span class="o">**</span><span class="mi">3</span> <span class="c1"># 32 bit</span>
     <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;float64&#39;</span><span class="p">:</span> <span class="n">mem_size</span> <span class="o">*=</span> <span class="mi">2</span>
     
-    <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.jagged2matrix: Creating a matrix with dimensions [</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s1"> x </span><span class="si">{</span><span class="n">D</span><span class="si">}</span><span class="s1">] (</span><span class="si">{</span><span class="n">mem_size</span><span class="si">:</span><span class="s1">0.3f</span><span class="si">}</span><span class="s1"> GB)&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Creating a matrix with dimensions [</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s1"> x </span><span class="si">{</span><span class="n">D</span><span class="si">}</span><span class="s1">] (</span><span class="si">{</span><span class="n">mem_size</span><span class="si">:</span><span class="s1">0.3f</span><span class="si">}</span><span class="s1"> GB)&#39;</span><span class="p">)</span>
 
     <span class="c1"># Pre-processing of jagged variable names</span>
     <span class="n">jvname</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1021,7 +1139,7 @@
                 <span class="n">k</span> <span class="o">+=</span> <span class="n">jagged_dim</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
 
     <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span>
-    <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.jagged2matrix: Processing took </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s1">0.1f</span><span class="si">}</span><span class="s1"> sec&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Processing took </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s1">0.1f</span><span class="si">}</span><span class="s1"> sec&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">shared_array</span></div>
 
@@ -1054,7 +1172,7 @@
             <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">c</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">arrays2matrix</span><span class="p">(</span><span class="n">x_arr</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">y_arr</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">ind</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">z_arr</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">ind</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> 
                 <span class="n">x_binedges</span><span class="o">=</span><span class="n">x_binedges</span><span class="p">,</span> <span class="n">y_binedges</span><span class="o">=</span><span class="n">y_binedges</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.jagged2tensor: Returning tensor with shape </span><span class="si">{</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Returning tensor with shape </span><span class="si">{</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">T</span></div>
 
@@ -1086,7 +1204,7 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_ind</span><span class="p">)):</span>
             <span class="n">A</span><span class="p">[</span><span class="n">x_ind</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y_ind</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">z_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.arrays2matrix: not valid input (returning 0-matrix)&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not valid input (returning 0-matrix)&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">A</span></div>
 
@@ -1218,11 +1336,11 @@
         <span class="n">vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">events</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">entry_start</span><span class="o">=</span><span class="n">entry_start</span><span class="p">,</span> <span class="n">entrystop</span><span class="o">=</span><span class="n">entry_stop</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">])</span>
     <span class="n">vec</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">T</span>
     
-    <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.count_targets: vec.shape = </span><span class="si">{</span><span class="n">vec</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;vec.shape = </span><span class="si">{</span><span class="n">vec</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="n">intmat</span> <span class="o">=</span> <span class="n">binaryvec2int</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span>
     <span class="n">BMAT</span>   <span class="o">=</span> <span class="n">generatebinary</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.count_targets: </span><span class="si">{</span><span class="n">ids</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ids</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">BMAT</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">BMAT</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="si">}</span><span class="s1"> : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">intmat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">intmat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">intmat</span><span class="p">)</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
     
@@ -1462,7 +1580,7 @@
         <span class="n">K</span> <span class="o">+=</span> <span class="n">binomial</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">k</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.generatebinary: Binary matrix dimension </span><span class="si">{</span><span class="n">K</span><span class="si">}</span><span class="s1"> x </span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Binary matrix dimension </span><span class="si">{</span><span class="n">K</span><span class="si">}</span><span class="s1"> x </span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
     <span class="n">ivals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
@@ -1587,12 +1705,14 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">i</span><span class="si">}{</span><span class="n">filetype</span><span class="si">}</span><span class="s1">&#39;</span>
     
     <span class="k">if</span> <span class="n">epoch</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">epoch</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-        <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.create_model_filename: Loading the latest model by timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Loading the latest model by timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
 
         <span class="n">list_of_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1">_*</span><span class="si">{</span><span class="n">filetype</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.create_model_filename: Could not find any files for model &quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+            <span class="n">txt</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Could not find any files for model &quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="n">txt</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; under path </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
         
         <span class="c1"># Latest model</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getctime</span><span class="p">)</span>
@@ -1614,7 +1734,7 @@
             
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.create_model_filename: Problem in finding the model [</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1">] with the minimum validation loss&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Problem in finding the model [</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1">] with the minimum validation loss&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">succeeded</span><span class="p">:</span>
             <span class="c1"># Take the minimum validation loss epoch index</span>
@@ -1622,17 +1742,17 @@
             <span class="n">idx</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
             
             <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Found the best model at epoch [</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">] with validation loss = </span><span class="si">{</span><span class="n">losses</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">:</span><span class="s1">0.4f</span><span class="si">}</span><span class="s1">&#39;</span>
-            <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.create_model_filename: </span><span class="si">{</span><span class="nb">str</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">)</span>
             
             <span class="n">filename</span> <span class="o">=</span> <span class="n">createfilename</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
         <span class="c1"># ----------------------------------------------------</span>
         
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.create_model_filename: Loading the model with the provided epoch = </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Loading the model with the provided epoch = </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">createfilename</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
     
     <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">getmtime</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
-    <span class="n">cprint</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.create_model_filename: Found a model file: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1"> (modified </span><span class="si">{</span><span class="n">dt</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found a model file: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1"> (modified </span><span class="si">{</span><span class="n">dt</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
     
     <span class="k">return</span> <span class="n">filename</span></div>
 
@@ -1738,7 +1858,7 @@
         <span class="c1"># Invalid input</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.Metric: only one class present cannot evaluate metrics (return -1)&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;only one class present cannot evaluate metrics (return -1)&#39;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="c1"># Return None</span>
         
@@ -1819,7 +1939,7 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">trials</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="n">trials</span> <span class="o">&gt;</span> <span class="n">max_trials</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.Metric: bootstrap failed (check the input per class statistics)&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bootstrap failed (check the input per class statistics)&#39;</span><span class="p">)</span>
                     <span class="k">continue</span>
                 <span class="c1"># ------------------</span>
                 
@@ -1891,7 +2011,7 @@
     <span class="c1"># Fix NaN</span>
     <span class="n">num_nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">num_nan</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.compute_metrics: Found </span><span class="si">{</span><span class="n">num_nan</span><span class="si">}</span><span class="s1"> NaN/Inf (set to zero)&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found </span><span class="si">{</span><span class="n">num_nan</span><span class="si">}</span><span class="s1"> NaN/Inf (set to zero)&#39;</span><span class="p">)</span>
         <span class="n">y_pred</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Set to zero</span>
     
     <span class="k">try</span><span class="p">:</span>
@@ -1913,7 +2033,7 @@
             <span class="n">acc</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;.compute_metrics: Unable to compute ROC-metrics: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unable to compute ROC-metrics: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">class_ids</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;num of class[</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">] = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_true</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
