@@ -351,7 +351,7 @@ def read_config(config_path='configs/xyz/', runmode='all'):
         args['plotdir']  = aux.makedir(f"{args['plotdir']}/{run_id}")
         
         if runmode == 'eval' and cli_dict['evaltag'] is not None:
-            args['plotdir'] = aux.makedir(f"{args['plotdir']}/{run_id}/evaltag__{cli_dict['evaltag']}")
+            args['plotdir'] = aux.makedir(f"{args['plotdir']}/evaltag__{cli_dict['evaltag']}")
             print(f'Changing eval plotdir to: {args["plotdir"]}', 'red')
         
         # ----------------------------------------------------------------
@@ -367,6 +367,7 @@ def read_config(config_path='configs/xyz/', runmode='all'):
     # -------------------------------------------------------------------
     # Technical
     
+    args['__runmode__']         = cli_dict['runmode']
     args['__use_cache__']       = bool(cli_dict['use_cache'])
     args['__compute__']         = bool(cli_dict['compute'])
     args['__raytune_running__'] = False
@@ -392,7 +393,7 @@ def read_config(config_path='configs/xyz/', runmode='all'):
     
     # -------------------------------------------------------------------
     # Set random seeds for reproducability and train-validate-test splits
-
+    
     print('')
     print(" torch.__version__: " + torch.__version__)
 
@@ -420,39 +421,43 @@ def generic_flow(rootname, func_loader, func_factor):
     
     args, cli     = read_config(config_path=f'configs/{rootname}', runmode=runmode)
 
-    if runmode == 'genesis':
-        
-        icelogger.set_global_log_file(f'{args["datadir"]}/genesis_{args["__hash_genesis__"]}.log')
-        
-        read_data(args=args, func_loader=func_loader, runmode=runmode) 
-        
-    if runmode == 'train' or runmode == 'eval':
-
-        icelogger.set_global_log_file(f'{args["plotdir"]}/{runmode}/execution.log')
-        
-        data = read_data_processed(args=args, func_loader=func_loader,
-                func_factor=func_factor, mvavars=f'configs.{rootname}.mvavars', runmode=runmode)
-    
-    if args['__compute__']:
+    try:
+            
+        if runmode == 'genesis':
+            
+            icelogger.set_global_log_file(f'{args["datadir"]}/genesis_{args["__hash_genesis__"]}.log')
+            print(cli) # for output log
+            read_data(args=args, func_loader=func_loader, runmode=runmode) 
+            
+        if runmode == 'train' or runmode == 'eval':
+            
+            icelogger.set_global_log_file(f'{args["plotdir"]}/{runmode}/execution.log')
+            print(cli) # for output log
+            data = read_data_processed(args=args, func_loader=func_loader,
+                    func_factor=func_factor, mvavars=f'configs.{rootname}.mvavars', runmode=runmode)
         
         if runmode == 'train':
-            
+
             output_file = f'{args["plotdir"]}/train/stats_train.log'
             prints.print_variables(X=data['trn']['data'].x, W=data['trn']['data'].w, ids=data['trn']['data'].ids, output_file=output_file)
-            
             make_plots(data=data['trn'], args=args, runmode=runmode)
             
-            train_models(data_trn=data['trn'], data_val=data['val'], args=args)
+            if args['__compute__']:
+                train_models(data_trn=data['trn'], data_val=data['val'], args=args)
 
         if runmode == 'eval':
             
             output_file = f'{args["plotdir"]}/eval/stats_evaluate.log'
-            prints.print_variables(X=data['tst']['data'].x, W=data['tst']['data'].w, ids=data['tst']['data'].ids, output_file=output_file)
-            
+            prints.print_variables(X=data['tst']['data'].x, W=data['tst']['data'].w, ids=data['tst']['data'].ids, output_file=output_file)        
             make_plots(data=data['tst'], args=args, runmode=runmode)
             
-            evaluate_models(data=data['tst'], info=data['info'], args=args)
-        
+            if args['__compute__']:
+                evaluate_models(data=data['tst'], info=data['info'], args=args)
+
+    except Exception as e:
+        print(e)
+        raise Exception(e)
+    
     return args, runmode
 
 # -------------------------------------------------------------------
@@ -821,7 +826,13 @@ def process_data(args, predata, func_factor, mvavars, runmode):
         
         permute = args['permute'] if 'permute' in args else True
         trn, val, tst = io.split_data(X=X, Y=Y, W=W, ids=ids, frac=args['frac'], permute=permute)
-       
+    
+    # ----------------------------------------------------------
+    # ** Re-permute train and validation events for safety **
+    trn = trn.permute(np.random.permutation(len(trn.x)))
+    val = val.permute(np.random.permutation(len(val.x)))
+    # ----------------------------------------------------------    
+    
     # ----------------------------------------------------------
     if args['imputation_param']['active']:
         module = import_module(mvavars, 'configs.subpkg')
